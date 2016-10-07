@@ -76,7 +76,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = PLUMEMoM$(EXEEXT)
+bin_PROGRAMS = IMEXSfloW$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -88,12 +88,11 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_PLUMEMoM_OBJECTS = moments.$(OBJEXT) plume.$(OBJEXT) \
-	variables.$(OBJEXT) meteo.$(OBJEXT) particles.$(OBJEXT) \
-	mixture.$(OBJEXT) solver_rise.$(OBJEXT) inpout.$(OBJEXT) \
-	rise.$(OBJEXT) plume_model.$(OBJEXT)
-PLUMEMoM_OBJECTS = $(am_PLUMEMoM_OBJECTS)
-PLUMEMoM_LDADD = $(LDADD)
+am_IMEXSfloW_OBJECTS = complexify.$(OBJEXT) parameters.$(OBJEXT) \
+	geometry.$(OBJEXT) constitutive.$(OBJEXT) solver.$(OBJEXT) \
+	init.$(OBJEXT) inpout.$(OBJEXT) IMEX_SfloW.$(OBJEXT)
+IMEXSfloW_OBJECTS = $(am_IMEXSfloW_OBJECTS)
+IMEXSfloW_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -119,8 +118,8 @@ AM_V_FCLD = $(am__v_FCLD_@AM_V@)
 am__v_FCLD_ = $(am__v_FCLD_@AM_DEFAULT_V@)
 am__v_FCLD_0 = @echo "  FCLD    " $@;
 am__v_FCLD_1 = 
-SOURCES = $(PLUMEMoM_SOURCES)
-DIST_SOURCES = $(PLUMEMoM_SOURCES)
+SOURCES = $(IMEXSfloW_SOURCES)
+DIST_SOURCES = $(IMEXSfloW_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -228,17 +227,15 @@ top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
 
 # list of sources for the binary
-PLUMEMoM_SOURCES = \
-		moments.f90 \
-		plume.f90 \
-                variables.f90 \
-		meteo.f90 \
-		particles.f90 \
-                mixture.f90 \
-                solver_rise.f90 \
-                inpout.f90 \
-		rise.f90 \
-                plume_model.f90
+IMEXSfloW_SOURCES = \
+		complexify.f90 \
+		parameters.f90 \
+		geometry.f90 \
+		constitutive.f90 \
+		solver.f90 \
+		init.f90 \
+		inpout.f90 \
+		IMEX_SfloW.f90
 
 FCDEBUGFLAGS = -Wall -g
 MPFC = gfortran
@@ -320,9 +317,9 @@ uninstall-binPROGRAMS:
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 
-PLUMEMoM$(EXEEXT): $(PLUMEMoM_OBJECTS) $(PLUMEMoM_DEPENDENCIES) $(EXTRA_PLUMEMoM_DEPENDENCIES) 
-	@rm -f PLUMEMoM$(EXEEXT)
-	$(AM_V_FCLD)$(FCLINK) $(PLUMEMoM_OBJECTS) $(PLUMEMoM_LDADD) $(LIBS)
+IMEXSfloW$(EXEEXT): $(IMEXSfloW_OBJECTS) $(IMEXSfloW_DEPENDENCIES) $(EXTRA_IMEXSfloW_DEPENDENCIES) 
+	@rm -f IMEXSfloW$(EXEEXT)
+	$(AM_V_FCLD)$(FCLINK) $(IMEXSfloW_OBJECTS) $(IMEXSfloW_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

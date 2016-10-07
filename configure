@@ -2730,7 +2730,7 @@ fi
 
 
 # Define the identity of the package.
- PACKAGE='IMEX_SfloW'
+ PACKAGE='imex_sflow'
  VERSION='1.0'
 
 
