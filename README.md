@@ -1,5 +1,5 @@
-# template
-template program
+# IMEX-SfloW
+Implix-Explicit Shallow Water solver
 
 To compile:
 
