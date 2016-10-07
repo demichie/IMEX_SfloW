@@ -5,12 +5,20 @@ AUTOMAKE_OPTIONS = foreign
 ###############################################################################
 
 # the program to build (the names of the final binaries)
-bin_PROGRAMS = TEST
+bin_PROGRAMS = IMEXSfloW
 bindir=@bindir@
 
 # list of sources for the binary
-PLUMEMoM_SOURCES = \
-		test.f90
+IMEXSfloW_SOURCES = \
+		complexify.f90 \
+		parameters.f90 \
+		geometry.f90 \
+		constitutive.f90 \
+		init.f90 \
+		inpout.f90 \
+		solver.f90 \
+		IMEX_SfloW.f90
+
 
 FCFLAGS         = -g -O3 -ffast-math
 FCDEBUGFLAGS    = -Wall -g
