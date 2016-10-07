@@ -1,6 +1,8 @@
 # IMEX-SfloW
 Implix-Explicit Shallow Water solver
 
+Main Github project page: http://demichie.github.io/IMEX_SfloW/
+
 To compile:
 
 ./configure
