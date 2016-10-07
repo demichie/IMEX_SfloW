@@ -1,0 +1,6 @@
+<map id="constitutive::eval_local_speeds" name="constitutive::eval_local_speeds">
+<area shape="rect" id="node2" href="$classsolver.html#abd4348ce0a419f02bddd356dfa5470bc" title="Time&#45;step computation. " alt="" coords="188,8,303,35"/>
+<area shape="rect" id="node4" href="$classsolver.html#aaca84b0a79154c2b5c6aac1b484fcce0" title="Characteristic speeds. " alt="" coords="176,60,315,87"/>
+<area shape="rect" id="node3" href="$IMEX__SfloW_8f90.html#a80b23a8cfea2702ae5a30733d93bd742" title="Github project page: http://demichie.github.io/IMEX_SfloW/ &#160;. " alt="" coords="396,5,484,32"/>
+<area shape="rect" id="node5" href="$classsolver.html#a4dc2ff97b9bfd8d78c59c693fbf1baf4" title="Semidiscrete finite volume central scheme. " alt="" coords="363,57,517,98"/>
+</map>
