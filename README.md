@@ -3,6 +3,8 @@ Implix-Explicit Shallow Water solver
 
 Main Github project page: http://demichie.github.io/IMEX_SfloW/
 
+IMPORTANT: The code requires the LAPACK library
+
 To compile:
 
 ./configure

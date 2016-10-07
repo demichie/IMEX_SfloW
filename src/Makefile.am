@@ -23,7 +23,7 @@ IMEXSfloW_SOURCES = \
 FCFLAGS         = -g -O3 -ffast-math
 FCDEBUGFLAGS    = -Wall -g
 
-LIBS            = -lz -lm -llapack
+LIBS            = -lm -llapack
 
 FC              = gfortran
 MPFC            = gfortran
