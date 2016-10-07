@@ -14,9 +14,9 @@ IMEXSfloW_SOURCES = \
 		parameters.f90 \
 		geometry.f90 \
 		constitutive.f90 \
+		solver.f90 \
 		init.f90 \
 		inpout.f90 \
-		solver.f90 \
 		IMEX_SfloW.f90
 
 
