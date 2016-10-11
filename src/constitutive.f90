@@ -9,11 +9,9 @@ MODULE constitutive
 
   LOGICAL, ALLOCATABLE :: implicit_flag(:)
 
-  CHARACTER(LEN=20) :: phase1_name
-  CHARACTER(LEN=20) :: phase2_name
+  CHARACTER(LEN=20) :: friction_model
 
   !--------- Constants for the equations of state -----------------------------
-
 
   COMPLEX*16 :: h      !< height
   COMPLEX*16 :: u      !< velocity
@@ -341,9 +339,32 @@ CONTAINS
     REAL*8, INTENT(IN) :: qj(n_eqns)                 !< conservative variables 
     REAL*8, INTENT(OUT) :: expl_forces_term(n_eqns)  !< explicit forces 
    
+    REAL*8 :: frict_coeff
+
     expl_forces_term(1:n_eqns) = 0.D0
 
-    expl_forces_term(2) = grav * ( qj(1) - Bj ) * Bprimej
+    CALL phys_var(Bj,r_qj = qj)
+
+    SELECT CASE ( friction_model)
+       
+    CASE DEFAULT
+       
+       frict_coeff = 0.D0
+       
+    CASE ('None')
+
+       frict_coeff = 0.D0
+
+    CASE ('KP2007')
+
+       frict_coeff = 1.D-3 / ( 1.D0 + 10.D0 * REAL(h) )
+
+    END SELECT
+
+    expl_forces_term(2) = grav * ( qj(1) - Bj ) * Bprimej +                     &
+         frict_coeff * REAL(u)
+
+    RETURN
 
 
   END SUBROUTINE eval_explicit_forces

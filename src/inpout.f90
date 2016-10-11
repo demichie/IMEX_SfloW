@@ -35,6 +35,7 @@ MODULE inpout
 
   ! -- Variables for the namelist SOURCE_PARAMETERS
   USE constitutive, ONLY : grav
+  USE constitutive, ONLY : friction_model
 
   IMPLICIT NONE
 
@@ -83,7 +84,7 @@ MODULE inpout
 
   NAMELIST / right_boundary_conditions / hB_bcR , u_bcR
 
-  NAMELIST / source_parameters / grav
+  NAMELIST / source_parameters / grav , friction_model
 
 CONTAINS
 
@@ -162,6 +163,7 @@ CONTAINS
 
     !-- Inizialization of the Variables for the namelist source_parameters
     grav = -9.81D0
+    friction_model = 'none'
 
     input_file = 'shallow_water.inp'
 
