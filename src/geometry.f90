@@ -46,7 +46,7 @@ CONTAINS
 
   SUBROUTINE init_grid
 
-    USE parameters, ONLY: eps_sing
+    USE parameters, ONLY: eps_sing, batimetry_function_flag
 
     IMPLICIT none
 
@@ -63,41 +63,79 @@ CONTAINS
     
     dx = ( xN - x0 ) / comp_cells
     
-    eps_sing = dx ** 4.D0
+    eps_sing = dx ** 4
 
     WRITE(*,*) 'eps_sing = ',eps_sing
 
     x_comp(1) = x0 + 0.5D0 * dx
     x_stag(1) = x0
 
-    batimetry_profile(1,:) = x0 + ( xN - x0 ) * batimetry_profile(1,:) 
+    ! rescaling in the case of batimetry defined in input file
+    IF(batimetry_function_flag.EQV..FALSE.)THEN
 
-    B_stag(1) = batimetry_profile(2,1)
+       batimetry_profile(1,:) = x0 + ( xN - x0 ) * batimetry_profile(1,:) 
 
-    DO j=1,comp_cells
+    ENDIF
 
-       x_stag(j+1) = x_stag(j) + dx
+    ! definition of batimetry by input file
+    IF(batimetry_function_flag.EQV..FALSE.)THEN
+
+      B_stag(1) = batimetry_profile(2,1)
+
+      DO j=1,comp_cells
+
+         x_stag(j+1) = x_stag(j) + dx
        
-       x_comp(j) = 0.5 * ( x_stag(j) + x_stag(j+1) )
+         x_comp(j) = 0.5 * ( x_stag(j) + x_stag(j+1) )
 
-       CALL interp_1d_scalar( batimetry_profile(1,:) , batimetry_profile(2,:) , &
-            x_stag(j+1) , B_stag(j+1) )
+         CALL interp_1d_scalar( batimetry_profile(1,:) , batimetry_profile(2,:) , &
+              x_stag(j+1) , B_stag(j+1) )
 
 
-       B_cent(j) = 0.5 * ( B_stag(j) + B_stag(j+1) )
+         B_cent(j) = 0.5 * ( B_stag(j) + B_stag(j+1) )
        
-       B_prime(j) = ( B_stag(j+1) - B_stag(j) ) / (  x_stag(j+1) - x_stag(j) )
+         B_prime(j) = ( B_stag(j+1) - B_stag(j) ) / (  x_stag(j+1) - x_stag(j) )
 
-       IF ( verbose_level .GE. 2 ) THEN
+         IF ( verbose_level .GE. 2 ) THEN
 
-          WRITE(*,*) batimetry_profile(1,:) 
-          WRITE(*,*) batimetry_profile(2,:)
-          WRITE(*,*) x_stag(j+1) , B_stag(j+1) ,x_comp(j) , B_cent(j) , B_prime(j) 
-          READ(*,*)
+            WRITE(*,*) batimetry_profile(1,:) 
+            WRITE(*,*) batimetry_profile(2,:)
+            WRITE(*,*) x_stag(j+1) , B_stag(j+1) ,x_comp(j) , B_cent(j) , B_prime(j) 
+            READ(*,*)
 
-       END IF
+         END IF
 
-    END DO
+      END DO
+
+    ! definition of batimetry by a function
+    ELSE
+
+      B_stag(1) = batimetry_function(x_stag(1))
+
+      DO j=1,comp_cells
+
+         x_stag(j+1) = x_stag(j) + dx
+       
+         x_comp(j) = 0.5 * ( x_stag(j) + x_stag(j+1) )
+
+         B_stag(j+1) = batimetry_function(x_stag(j+1))
+
+         B_cent(j) = 0.5 * ( B_stag(j) + B_stag(j+1) )
+       
+         B_prime(j) = ( B_stag(j+1) - B_stag(j) ) / (  x_stag(j+1) - x_stag(j) )
+
+         IF ( verbose_level .GE. 2 ) THEN
+
+            WRITE(*,*) batimetry_profile(1,:) 
+            WRITE(*,*) batimetry_profile(2,:)
+            WRITE(*,*) x_stag(j+1) , B_stag(j+1) ,x_comp(j) , B_cent(j) , B_prime(j) 
+            READ(*,*)
+
+         END IF
+
+      END DO
+
+    ENDIF
 
   END SUBROUTINE init_grid
 
@@ -156,5 +194,59 @@ CONTAINS
     RETURN
     
   END SUBROUTINE interp_1d_scalar
+
+
+!---------------------------------------------------------------------------
+!> Batimetry function
+!
+!> This subroutine generates a point of the batimetry from the input x grid point
+!> \date OCTOBER 2016
+!> \param    x           original grid                (\b input)
+!---------------------------------------------------------------------------
+  REAL*8 FUNCTION batimetry_function(x)
+    IMPLICIT NONE
+    
+    REAL*8, INTENT(IN) :: x
+
+    REAL*8, PARAMETER :: pig = 4.0*ATAN(1.0)
+    REAL*8, PARAMETER :: eps_dis = 10.0**(-8)
+
+    ! example from Kurganov and Petrova 2007    
+    IF(x.LT.0.0)THEN
+
+      batimetry_function = 1.d0
+
+    ELSEIF(x.GE.0.0.AND.x.LE.0.4)THEN
+
+      batimetry_function = COS(pig*x)**2
+
+    ELSEIF(x.GT.0.4.AND.x.LE.0.5)THEN
+
+      batimetry_function = COS(pig*x)**2+0.25*(COS(10.0*pig*(x-0.5))+1)
+
+    ELSEIF(x.GT.0.5.AND.x.LE.0.6)THEN
+
+      batimetry_function = 0.5*COS(pig*x)**4+0.25*(COS(10.0*pig*(x-0.5))+1)
+
+    ELSEIF(x.GT.0.6.AND.x.LT.1.0-eps_dis)THEN
+
+      batimetry_function = 0.5*COS(pig*x)**4
+
+    ELSEIF(x.GE.1.0-eps_dis.AND.x.LE.1.0+eps_dis)THEN
+
+      batimetry_function = 0.25
+
+    ELSEIF(x.GT.1.0+eps_dis.AND.x.LE.1.5)THEN
+
+      batimetry_function = 0.25*SIN(2*pig*(x-1))
+
+    ELSE
+
+      batimetry_function = 0.d0
+
+    ENDIF
+
+  END FUNCTION batimetry_function
+  
   
 END MODULE geometry

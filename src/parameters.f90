@@ -17,11 +17,30 @@ MODULE parameters
 
   REAL*8 :: reconstr_coeff    !< Slope coefficient in the linear reconstruction
 
+  !> Parameter for the choice of the variables to reconstruct at the interface:
+  !> - 0      => conservative variables ( h+B , h*u ), default
+  !> - 1      => physical variables 1   ( h+B , u )
+  !> - 2      => physical variables 2   ( h , u )
+  !> .
+  INTEGER :: reconstr_variables 
+
   !> Flag to add the relaxation terms after the linear reconstruction:\n
   !> - T      => evaluate the relaxation terms
   !> - F      => reconstruction without the relaxation 
   !> .
   LOGICAL :: interfaces_relaxation
+
+  !> Flag to choose in which way we upload the batimetry
+  !> - T      => through a function
+  !> - F      => through points
+  !> .
+  LOGICAL :: batimetry_function_flag
+
+  !> Flag to choose the sort of problem to solve
+  !> - T      => riemann problem
+  !> - F      => generic initial conditions (uploaded through functions, to be defined in inpout_2d.f90)
+  !> .
+  LOGICAL :: riemann_flag
 
   INTEGER, PARAMETER :: n_vars = 2        !< Number of conservative variables
   INTEGER, PARAMETER :: n_eqns = n_vars   !< Number of equations

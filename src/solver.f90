@@ -22,6 +22,7 @@ MODULE solver
 
   USE parameters, ONLY : n_eqns , n_vars , n_nh
   USE parameters, ONLY : n_RK
+  USE parameters, ONLY : reconstr_variables
   USE parameters, ONLY : verbose_level
 
   USE parameters, ONLY : bcL , bcR
@@ -335,27 +336,64 @@ CONTAINS
     REAL*8 :: dt_cfl        !< local time step
     REAL*8 :: qj(n_vars)    !< conservative variables
 
-    INTEGER :: j            !< loop counter
+    REAL*8 :: a_interface_max(n_eqns,comp_interfaces)
+    REAL*8 :: dt_interface
+
+    INTEGER :: i, j            !< loop counters
 
     dt = max_dt
 
     IF ( cfl .NE. -1.d0 ) THEN
-       
+
+       IF ( reconstr_variables .EQ. 0 ) THEN
+
+          ! Linear reconstruction of the conservative variables at the interfaces
+          CALL reconstruction_cons
+
+       ELSEIF ( reconstr_variables .EQ. 0 ) THEN
+     
+          ! Linear reconstruction of the physical var. (h+B,u) at the interfaces
+          CALL reconstruction_phys1
+        
+       ELSE 
+
+          ! Linear reconstruction of the physical var. (h,u) at the interfaces
+          CALL reconstruction_phys2
+      
+       END IF
+
+       ! Evaluation of the maximum local speeds at the interfaces
+       CALL eval_speeds
+  
+       DO i=1,n_vars
+
+          a_interface_max(i,:) = MAX( a_interfaceR(i,:) , -a_interfaceL(i,:) )
+
+       END DO
+
        DO j = 1,comp_cells
 
-          qj = q( 1:n_vars , j )
+          ! qj = q( 1:n_vars , j )
           
-          CALL eval_local_speeds(qj,B_cent(j),vel_min,vel_max)
+          ! CALL eval_local_speeds(qj,B_cent(j),vel_min,vel_max)
 
-          vel_j = MAX( MAXVAL(ABS(vel_min)) , MAXVAL(ABS(vel_max)) )
+          ! vel_j = MAX( MAXVAL(ABS(vel_min)) , MAXVAL(ABS(vel_max)) )
           
-          dt_cfl = cfl * dx / vel_j
+          ! dt_cfl = cfl * dx / vel_j
           
-          dt = MIN( dt , dt_cfl )
-          
+          ! dt = MIN( dt , dt_cfl )
+     
+          dt_interface = cfl * dx / MAX( MAXVAL(a_interface_max(:,j)) ,         &
+               MAXVAL(a_interface_max(:,j+1)) )
+
+          dt = MIN( dt , dt_interface )
+     
        END DO
-       
+     
     END IF
+
+
+
 
   END SUBROUTINE timestep
 
@@ -453,6 +491,7 @@ CONTAINS
 
           q_rk( 1:n_vars , j , i_RK ) = q_guess
 
+
           ! store the non-hyperbolic term for the explicit computations
           IF ( a_diag .EQ. 0.D0 ) THEN
 
@@ -488,9 +527,11 @@ CONTAINS
 
        IF ( verbose_level .GE. 1 ) THEN
 
+          WRITE(*,*) 'Fx, expl_terms'
+
           DO j = 1,comp_cells
              
-             WRITE(*,*) F_x(2,j,i_RK),expl_terms(2,j,i_RK)
+             WRITE(*,*) F_x(1:n_vars,j,i_RK),expl_terms(2,j,i_RK)
              
           END DO
           
@@ -1274,12 +1315,28 @@ CONTAINS
 
     INTEGER :: i, j      !< loop counters
     
+    REAL*8 :: h_new
+
     q_old = q
 
     q = q_expl
 
-    ! Linear reconstruction of the pysical variables at the interfaces
-    CALL reconstruction
+    IF ( reconstr_variables .EQ. 0 ) THEN
+       
+       ! Linear reconstruction of the conservative variables at the interfaces
+       CALL reconstruction_cons
+       
+    ELSEIF ( reconstr_variables .EQ. 0 ) THEN
+       
+       ! Linear reconstruction of the physical var. (h+B,u) at the interfaces
+       CALL reconstruction_phys1
+       
+    ELSE 
+       
+       ! Linear reconstruction of the physical var. (h,u) at the interfaces
+       CALL reconstruction_phys2
+       
+    END IF
     
     ! Evaluation of the maximum local speeds at the interfaces
     CALL eval_speeds
@@ -1301,6 +1358,7 @@ CONTAINS
        
     END SELECT
     
+
     ! Advance in time the solution
     DO j = 1,comp_cells
           
@@ -1310,11 +1368,48 @@ CONTAINS
 
        END DO
 
-!       WRITE(*,*) 'F_x',j,F_x(:,j), H_interface(1,j+1) , H_interface(1,j)
-!       READ(*,*)
-       
+       h_new = q_expl(1,j) - dt * F_x(1,j) - B_cent(j)
+
+       IF ( h_new .LT. 0.D0 ) THEN
+
+          WRITE(*,*) 'j,h',j,h_new
+          WRITE(*,*) 'dt',dt
+          DO i=-2,2
+             
+             WRITE(*,*)  B_cent(j+i) , B_prime(j+i) , q_expl(1,j+i) , q_expl(2,j+i) 
+             
+          END DO
+
+          WRITE(*,*) 'w_interface(j) ',q_interfaceL(1,j) , q_interfaceR(1,j)
+          WRITE(*,*) 'w_interface(j+1) ',q_interfaceL(1,j+1) , q_interfaceR(1,j+1)
+
+          WRITE(*,*) 'uh_interface(j) ',q_interfaceL(2,j) , q_interfaceR(2,j)
+          WRITE(*,*) 'uh_interface(j+1) ',q_interfaceL(2,j+1) , q_interfaceR(2,j+1)
+
+          WRITE(*,*) 'a(j) ',a_interfaceL(1,j) , a_interfaceR(1,j)
+          WRITE(*,*) 'a(j+1) ',a_interfaceL(1,j+1) , a_interfaceR(1,j+1)
+
+          WRITE(*,*) 'H_interface ',H_interface(i,j) , H_interface(i,j+1)
+          WRITE(*,*) 
+          READ(*,*) 
+
+       END IF
+
+       IF ( verbose_level .GE. 1 ) THEN
+
+          WRITE(*,*) 'F_x',j,F_x(:,j), H_interface(1,j+1) , H_interface(1,j)
+          READ(*,*)
+          
+       END IF
+
     END DO
     
+    !WRITE(*,*) 'flux left', H_interface(1,1)
+    !WRITE(*,*) 'flux right', H_interface(1,comp_cells+1)
+    !WRITE(*,*) 'sum fluxes',SUM(F_x(1,:))
+    !READ(*,*)
+
+
     q = q_old
     
   END SUBROUTINE eval_hyperbolic_terms
@@ -1388,6 +1483,15 @@ CONTAINS
 
        END DO
 
+!       IF ( j .EQ. comp_interfaces ) THEN
+!
+!          WRITE(*,*) 'flux',  H_interface(1,j) , flux_avg(1),                   &
+!               ( a_interfaceR(1,j) * a_interfaceL(1,j) )                   &
+!                  / ( a_interfaceR(1,j) - a_interfaceL(1,j) )                   &
+!                  * ( q_interfaceR(1,j) - q_interfaceL(1,j) )
+!
+!       END IF
+
     END DO
 
   END SUBROUTINE eval_flux_KT
@@ -1409,7 +1513,8 @@ CONTAINS
 
        IF ( aL(i) .EQ. aR(i) ) THEN
 
-          w_avg(i) = 0.5D0 * ( wL(i) + wR(i) )
+          ! w_avg(i) = 0.5D0 * ( wL(i) + wR(i) )
+          w_avg(i) = 0.0D0
 
        ELSE
 
@@ -1537,7 +1642,7 @@ CONTAINS
 
        DO i=1,n_eqns
 
-          H_interface(i,j)=flux_lf(i)
+          H_interface(i,j) = flux_lf(i)
           
        END DO
        
@@ -1549,17 +1654,304 @@ CONTAINS
   !> \brief Linear reconstruction
   !
   !> In this subroutine a linear reconstruction with slope limiters is
-  !> applied to a set of physical variables describing the state of the
-  !> system (\f$\alpha_1, p_1, p_2, \rho u, w, T \f$).
+  !> applied to a set of conservative variables describing the state of the
+  !> system. 
   !> @author 
   !> Mattia de' Michieli Vitturi
-  !> \date 15/08/2011
+  !> \date 17/11/2016
   !******************************************************************************
 
-  SUBROUTINE reconstruction
+  SUBROUTINE reconstruction_cons
 
     ! External procedures
     USE constitutive, ONLY : qc_to_qp , qp_to_qc
+    USE parameters, ONLY : limiter
+
+    ! External variables
+    USE geometry, ONLY : x_comp , x_stag
+    USE parameters, ONLY : reconstr_coeff
+
+    IMPLICIT NONE
+
+    REAL*8 :: qc(n_vars)      !< conservative variables
+    REAL*8 :: qcL(n_vars)     !< conservative variables at the left edge of the cells
+    REAL*8 :: qcR(n_vars)     !< conservative variables at the rightedge of the cells
+
+    REAL*8 :: qc_stencil(3)   !< conservative variables stencil for the limiter
+    REAL*8 :: x_stencil(3)    !< grid stencil for the limiter
+    REAL*8 :: qc_prime        !< conservative variables slope
+
+    REAL*8 :: qp_check(n_vars)
+
+    REAL*8 :: dxL , dxR
+
+    INTEGER :: j              !< loop counter
+    INTEGER :: i              !< loop counter
+
+    DO i=1,n_vars
+
+       ! Slope in the first cell
+       IF ( bcL(i)%flag .EQ. 0 ) THEN
+          ! Dirichelet boundary condition
+
+          qc_stencil(1) = bcL(i)%value
+          qc_stencil(2:3) = q(i,1:2)
+          
+          x_stencil(1) = x_stag(1)
+          x_stencil(2:3) = x_comp(1:2)
+          
+          CALL limit( qc_stencil , x_stencil , limiter(i) , qc_prime ) 
+
+       ELSEIF ( bcL(i)%flag .EQ. 1 ) THEN
+          ! Neumann boundary condition (fixed slope)
+        
+          qc_prime = bcL(i)%value
+
+       ELSEIF ( bcL(i)%flag .EQ. 2 ) THEN
+          ! Linear extrapolation from internal values
+
+          qc_prime = ( q(i,2) - q(i,1) ) / ( x_comp(2) - x_comp(1) )
+          
+       END IF
+
+       ! Linear reconstruction of the conservative variables at the boundaries
+       ! of for the first cell
+       dxL = x_comp(1) - x_stag(1)
+       qcL(i) = q(i,1) - reconstr_coeff * dxL * qc_prime
+
+       dxR = x_stag(2) - x_comp(1)
+       qcR(i) = q(i,1) + reconstr_coeff * dxR * qc_prime
+
+       ! Positivity preserving reconstruction for h
+       IF (i.eq.1) THEN
+          
+          IF ( qcR(i) .LT. B_stag(2) ) THEN
+             
+             qc_prime = ( B_stag(2) - q(i,1) ) / dxR
+             
+             qcL(i) = q(i,1) - reconstr_coeff * dxL * qc_prime
+             
+             qcR(i) = q(i,1) + reconstr_coeff * dxR * qc_prime
+             
+          ENDIF
+          
+          IF ( qcL(i) .LT. B_stag(1) ) THEN
+             
+             qc_prime = ( q(i,1) - B_stag(1) ) / dxL
+             
+             qcL(i) = q(i,1) - reconstr_coeff * dxL * qc_prime
+             
+             qcR(i) = q(i,1) + reconstr_coeff * dxR * qc_prime
+             
+          ENDIF
+          
+       ENDIF
+       
+    END DO
+
+    ! Correction for small values (Eqs. 2.17 and 2.21 K&P)
+    CALL qc_to_qp( qcL , B_stag(1) , qp_check )
+    CALL qp_to_qc( qp_check , B_stag(1) , qcL )
+
+    CALL qc_to_qp( qcR , B_stag(2) , qp_check )
+    CALL qp_to_qc( qp_check , B_stag(2) , qcR )
+ 
+    
+    ! Value at the right of the first interface
+    q_interfaceR(1:n_vars,1) = qcL
+    ! Value at the left of the second interface
+    q_interfaceL(1:n_vars,2) = qcR
+
+    ! Values at the left of the first interface (out of the domain)
+    DO i=1,n_vars
+
+       IF ( bcL(i)%flag .EQ. 0 ) THEN
+          
+          q_interfaceR(i,1) = bcL(i)%value 
+          q_interfaceL(i,1) = bcL(i)%value 
+        
+       ELSEIF ( bcL(i)%flag .EQ. 1 ) THEN
+
+          q_interfaceL(i,1) = q_interfaceR(i,1) 
+  
+       ELSE
+          
+          q_interfaceL(i,1) = qcL(i)
+          
+       END IF
+
+    END DO
+
+    ! Linear reconstruction of the physical variables for the internal cells
+    DO j = 2,comp_cells-1
+       
+       x_stencil(1:3) = x_comp(j-1:j+1)
+       
+       DO i=1,n_vars
+          
+          qc_stencil = q(i,j-1:j+1)
+          
+          CALL limit( qc_stencil , x_stencil , limiter(i) , qc_prime ) 
+          
+          ! Linear reconstruction at the left bdry of the cell
+          dxL = x_comp(j) - x_stag(j)
+          qcL(i) = q(i,j) - reconstr_coeff * dxL * qc_prime
+          
+          ! Linear reconstruction at the right bdry of the cell
+          dxR = x_stag(j+1) - x_comp(j)
+          qcR(i) = q(i,j) + reconstr_coeff * dxR * qc_prime
+          
+          ! Positivity preserving reconstruction for h
+          IF ( i .EQ. 1 ) THEN
+             
+             IF ( qcR(i) .LT. B_stag(j+1) ) THEN
+                
+                qc_prime = ( B_stag(j+1) - q(i,j) ) / dxR
+                
+                qcL(i) = q(i,j) - reconstr_coeff * dxL * qc_prime
+                
+                qcR(i) = q(i,j) + reconstr_coeff * dxR * qc_prime
+                
+             ENDIF
+             
+             IF ( qcL(i) .LT. B_stag(j) ) THEN
+                
+                qc_prime = ( q(i,j) - B_stag(j) ) / dxL
+                
+                qcL(i) = q(i,j) - reconstr_coeff * dxL * qc_prime
+                
+                qcR(i) = q(i,j) + reconstr_coeff * dxR * qc_prime
+                
+             ENDIF
+             
+          ENDIF
+          
+       END DO
+       
+              
+       ! Correction for small values (Eqs. 2.17 and 2.21 K&P)
+       CALL qc_to_qp( qcL , B_stag(j) , qp_check )
+       CALL qp_to_qc( qp_check , B_stag(j) , qcL )
+       
+ 
+       CALL qc_to_qp( qcR , B_stag(j+1) , qp_check )
+       CALL qp_to_qc( qp_check , B_stag(j+1) , qcR )
+       
+       ! Value at the right of the j-th interface
+       q_interfaceR(:,j) = qcL
+       ! Value at the left of the j+1-th interface
+       q_interfaceL(:,j+1) = qcR
+
+    END DO
+
+    ! Linear reconstruction of the physical variables at the boundaries
+    ! of the last cell (j=comp_cells)
+
+    DO i=1,n_vars
+       
+       IF ( bcR(i)%flag .EQ. 0 ) THEN
+          
+          qc_stencil(1:2) = q(i,comp_cells-1:comp_cells)
+          qc_stencil(3) = bcR(i)%value
+          
+          x_stencil(1:2) = x_comp(comp_cells-1:comp_cells)
+          x_stencil(3) = x_stag(comp_interfaces)
+          
+          CALL limit( qc_stencil , x_stencil , limiter(i) , qc_prime ) 
+
+       ELSEIF ( bcR(i)%flag .EQ. 1 ) THEN
+        
+          qc_prime = bcR(i)%value
+          
+       ELSEIF ( bcR(i)%flag .EQ. 2 ) THEN
+        
+          qc_prime = ( q(i,comp_cells) - q(i,comp_cells-1) ) /                &
+               ( x_comp(comp_cells) - x_comp(comp_cells-1) )
+
+       END IF
+
+       dxL = x_comp(comp_cells) - x_stag(comp_interfaces-1)
+       qcL(i) = q(i,comp_cells) - reconstr_coeff * dxL * qc_prime
+       
+       dxR = x_stag(comp_interfaces) - x_comp(comp_cells)
+       qcR(i) = q(i,comp_cells) + reconstr_coeff * dxR * qc_prime
+
+       ! Positivity preserving reconstruction for h
+       IF (i.eq.1) THEN
+          
+          IF ( qcR(i) .LT. B_stag(comp_interfaces) ) THEN
+             
+             qc_prime = ( B_stag(comp_interfaces) - q(i,comp_cells) ) / dxR
+             
+             qcL(i) = q(i,comp_cells) - reconstr_coeff * dxL * qc_prime
+             
+             qcR(i) = q(i,comp_cells) + reconstr_coeff * dxR * qc_prime
+             
+          ENDIF
+          
+          IF ( qcL(i) .LT. B_stag(comp_interfaces-1) ) THEN
+             
+             qc_prime = ( q(i,comp_cells) - B_stag(comp_cells) ) / dxL
+             
+             qcL(i) = q(i,comp_cells) - reconstr_coeff * dxL * qc_prime
+             
+             qcR(i) = q(i,comp_cells) + reconstr_coeff * dxR * qc_prime
+             
+          ENDIF
+          
+       ENDIF
+       
+    END DO
+    
+    ! Correction for small values (Eqs. 2.17 and 2.21 K&P)
+    CALL qc_to_qp( qcL , B_stag(comp_cells) , qp_check )
+    CALL qp_to_qc( qp_check , B_stag(comp_cells) , qcL )
+    
+    CALL qc_to_qp( qcR , B_stag(comp_cells+1) , qp_check )
+    CALL qp_to_qc( qp_check , B_stag(comp_cells+1) , qcR )
+    
+    q_interfaceR(:,comp_interfaces-1) = qcL
+    q_interfaceL(:,comp_interfaces) = qcR
+  
+    ! Values at the right of the last interface (out of the domain)
+    DO i=1,n_vars
+
+       IF ( bcR(i)%flag .EQ. 0 ) THEN
+          
+          q_interfaceL(i,comp_interfaces) = bcR(i)%value 
+          q_interfaceR(i,comp_interfaces) = bcR(i)%value 
+          
+       ELSEIF ( bcR(i)%flag .EQ. 1 ) THEN
+          
+          q_interfaceR(i,comp_interfaces) = q_interfaceL(i,comp_interfaces) 
+          
+       ELSE
+          
+          q_interfaceR(i,comp_interfaces) = qcR(i)
+          
+       END IF
+
+    END DO
+
+  END SUBROUTINE reconstruction_cons
+
+  !******************************************************************************
+  !> \brief Linear reconstruction
+  !
+  !> In this subroutine a linear reconstruction with slope limiters is
+  !> applied to a set of physical variables (h+B,u) describing the state of the
+  !> system. 
+  !> @author 
+  !> Mattia de' Michieli Vitturi
+  !> \date 17/11/2016
+  !******************************************************************************
+
+
+  SUBROUTINE reconstruction_phys1
+
+    ! External procedures
+    USE constitutive, ONLY : qc_to_qp , qp_to_qc
+    USE constitutive, ONLY : qc_to_qp2 , qp2_to_qc
     USE parameters, ONLY : limiter
 
     ! External variables
@@ -1573,7 +1965,7 @@ CONTAINS
     REAL*8 :: qpR(n_vars)     !< physical variables at the rightedge of the cells
     REAL*8 :: qp_bdry(n_vars) !< physical variables outside the domain
 
-    REAL*8 :: qp_stencil(3)   !< physical varaibles stencil for the limiter
+    REAL*8 :: qp_stencil(3)   !< physical variables stencil for the limiter
     REAL*8 :: x_stencil(3)    !< grid stencil for the limiter
     REAL*8 :: qp_prime        !< physical variables slope
 
@@ -1619,16 +2011,52 @@ CONTAINS
        ! of for the first cell
        dxL = x_comp(1) - x_stag(1)
        qpL(i) = qp(i,1) - reconstr_coeff * dxL * qp_prime
-       
+
        dxR = x_stag(2) - x_comp(1)
        qpR(i) = qp(i,1) + reconstr_coeff * dxR * qp_prime
+
+       ! positivity preserving reconstruction for h
+       IF(i.eq.1)THEN
+
+         IF(qpR(i).LT.B_stag(2))THEN
+
+            qp_prime=(B_stag(2)-qp(i,1))/dxR
+
+            qpL(i) = qp(i,1) - reconstr_coeff * dxL * qp_prime
+
+            qpR(i) = qp(i,1) + reconstr_coeff * dxR * qp_prime
+
+         ENDIF
+
+         IF(qpL(i).LT.B_stag(1))THEN
+
+            qp_prime=(qp(i,1)-B_stag(1))/dxL
+
+            qpL(i) = qp(i,1) - reconstr_coeff * dxL * qp_prime
+
+            qpR(i) = qp(i,1) + reconstr_coeff * dxR * qp_prime
+
+         ENDIF
+
+       ENDIF
        
     END DO
     
+    DO i=1,n_vars
+       
+       IF ( bcL(i)%flag .EQ. 0 ) THEN
+          
+          qpL(i) = bcL(i)%value
+          
+       END IF
+       
+    END DO
+
 
     ! Convert back from physical to conservative variables
     CALL qp_to_qc( qpL , B_stag(1) , q_interfaceR(1:n_vars,1) )
     CALL qp_to_qc( qpR , B_stag(2) , q_interfaceL(1:n_vars,2) )
+
 
     DO i=1,n_vars
 
@@ -1638,7 +2066,18 @@ CONTAINS
           
        ELSE
           
-          qp_bdry(i) = qpL(i)
+          !qp_bdry(i) = qpL(i)
+
+          ! fixed wall
+          IF(i.eq.2)THEN
+
+             qp_bdry(i) = -qpL(i)
+
+          ELSE
+
+             qp_bdry(i) = qpL(i)
+
+          ENDIF
           
        END IF
 
@@ -1662,6 +2101,31 @@ CONTAINS
           
           dxR = x_stag(j+1) - x_comp(j)
           qpR(i) = qp(i,j) + reconstr_coeff * dxR * qp_prime
+
+          ! positivity preserving reconstruction for h
+          IF(i.eq.1)THEN
+ 
+            IF(qpR(i).LT.B_stag(j+1))THEN
+ 
+              qp_prime=(B_stag(j+1)-qp(i,j))/dxR
+
+              qpL(i) = qp(i,j) - reconstr_coeff * dxL * qp_prime
+
+              qpR(i) = qp(i,j) + reconstr_coeff * dxR * qp_prime
+
+            ENDIF
+
+            IF(qpL(i).LT.B_stag(j))THEN
+
+              qp_prime=(qp(i,j)-B_stag(j))/dxL
+
+              qpL(i) = qp(i,j) - reconstr_coeff * dxL * qp_prime
+
+              qpR(i) = qp(i,j) + reconstr_coeff * dxR * qp_prime
+
+            ENDIF
+
+          ENDIF
           
        END DO
 
@@ -1702,15 +2166,47 @@ CONTAINS
        
        dxR = x_stag(comp_interfaces) - x_comp(comp_cells)
        qpR(i) = qp(i,comp_cells) + reconstr_coeff * dxR * qp_prime
+
+       ! positivity preserving reconstruction for h
+       IF(i.eq.1)THEN
+
+         IF(qpR(i).LT.B_stag(comp_interfaces))THEN
+
+           qp_prime=(B_stag(comp_interfaces)-qp(i,comp_cells))/dxR
+
+           qpL(i) = qp(i,comp_cells) - reconstr_coeff * dxL * qp_prime
+
+           qpR(i) = qp(i,comp_cells) + reconstr_coeff * dxR * qp_prime
+
+         ENDIF
+
+         IF(qpL(i).LT.B_stag(comp_interfaces-1))THEN
+
+           qp_prime=(qp(i,comp_cells)-B_stag(comp_cells))/dxL
+
+           qpL(i) = qp(i,comp_cells) - reconstr_coeff * dxL * qp_prime
+
+           qpR(i) = qp(i,comp_cells) + reconstr_coeff * dxR * qp_prime
+
+         ENDIF
+
+       ENDIF
        
     END DO
     
+    DO i=1,n_vars
+
+       IF ( bcR(i)%flag .EQ. 0 ) THEN
+          
+          qpR(i) = bcR(i)%value
+          
+       END IF
+
+    END DO
 
     ! Convert back from physical to conservative variables
-    CALL qp_to_qc( qpL , B_stag(comp_interfaces-1) ,                            &
-         q_interfaceR(:,comp_interfaces-1) )
-    CALL qp_to_qc( qpR , B_stag(comp_interfaces) ,                              &
-        q_interfaceL(:,comp_interfaces) )
+    CALL qp_to_qc( qpL , B_stag(comp_interfaces-1) , q_interfaceR(:,comp_interfaces-1) )
+    CALL qp_to_qc( qpR , B_stag(comp_interfaces) , q_interfaceL(:,comp_interfaces) )
   
     DO i=1,n_vars
 
@@ -1720,7 +2216,18 @@ CONTAINS
           
        ELSE
           
-          qp_bdry(i) = qpR(i)
+          !qp_bdry(i) = qpR(i)
+
+          ! fixed wall
+          IF(i.eq.2)THEN
+
+             qp_bdry(i) = -qpR(i)
+
+          ELSE
+
+             qp_bdry(i) = qpR(i)
+
+          ENDIF
           
        END IF
 
@@ -1729,8 +2236,309 @@ CONTAINS
     CALL qp_to_qc( qp_bdry , B_stag(comp_interfaces) ,                          &
         q_interfaceR(:,comp_interfaces) )
 
+  END SUBROUTINE reconstruction_phys1
 
-  END SUBROUTINE reconstruction
+  !******************************************************************************
+  !> \brief Linear reconstruction
+  !
+  !> In this subroutine a linear reconstruction with slope limiters is
+  !> applied to a set of physical variables (h,u) describing the state of the
+  !> system. 
+  !> @author 
+  !> Mattia de' Michieli Vitturi
+  !> \date 17/11/2016
+  !******************************************************************************
+
+  SUBROUTINE reconstruction_phys2
+
+    ! External procedures
+    USE constitutive, ONLY : qc_to_qp , qp_to_qc
+    USE constitutive, ONLY : qc_to_qp2 , qp2_to_qc
+    USE parameters, ONLY : limiter
+
+    ! External variables
+    USE geometry, ONLY : x_comp , x_stag
+    USE parameters, ONLY : reconstr_coeff
+
+    IMPLICIT NONE
+
+    REAL*8 :: qc(n_vars)      !< conservative variables
+    REAL*8 :: qpL(n_vars)     !< physical variables at the left edge of the cells
+    REAL*8 :: qpR(n_vars)     !< physical variables at the rightedge of the cells
+    REAL*8 :: qp_bdry(n_vars) !< physical variables outside the domain
+
+    REAL*8 :: qp_stencil(3)   !< physical variables stencil for the limiter
+    REAL*8 :: x_stencil(3)    !< grid stencil for the limiter
+    REAL*8 :: qp_prime        !< physical variables slope
+
+    REAL*8 :: dxL , dxR
+
+    INTEGER :: j              !< loop counter
+    INTEGER :: i              !< loop counter
+
+
+    ! Convert the conservative variables to the physical variables
+    DO j = 1,comp_cells
+
+       qc = q(1:n_vars,j)
+
+       CALL qc_to_qp2( qc , B_cent(j) , qp(1:n_vars,j) )
+
+    END DO
+
+    DO i=1,n_vars
+
+       ! Slope in the first cell
+       IF ( bcL(i)%flag .EQ. 0 ) THEN
+          
+          qp_stencil(1) = bcL(i)%value
+          qp_stencil(2:3) = qp(i,1:2)
+          
+          x_stencil(1) = x_stag(1)
+          x_stencil(2:3) = x_comp(1:2)
+          
+          CALL limit( qp_stencil , x_stencil , limiter(i) , qp_prime ) 
+
+       ELSEIF ( bcL(i)%flag .EQ. 1 ) THEN
+        
+          qp_prime = bcL(i)%value
+
+       ELSEIF ( bcL(i)%flag .EQ. 2 ) THEN
+        
+          qp_prime = ( qp(i,2) - qp(i,1) ) / ( x_comp(2) - x_comp(1) )
+
+       END IF
+
+       ! Linear reconstruction of the physical variables at the boundaries
+       ! of for the first cell
+       dxL = x_comp(1) - x_stag(1)
+       qpL(i) = qp(i,1) - reconstr_coeff * dxL * qp_prime
+
+       dxR = x_stag(2) - x_comp(1)
+       qpR(i) = qp(i,1) + reconstr_coeff * dxR * qp_prime
+
+       ! positivity preserving reconstruction for h
+       IF ( i .EQ. 1 ) THEN
+
+         IF ( qpR(i) .LT. 0.D0 ) THEN
+
+            qp_prime = - qp(i,1) / dxR
+
+            qpL(i) = qp(i,1) - reconstr_coeff * dxL * qp_prime
+
+            qpR(i) = qp(i,1) + reconstr_coeff * dxR * qp_prime
+
+         ENDIF
+
+         IF ( qpL(i) .LT. 0.D0 ) THEN
+
+            qp_prime = qp(i,1) / dxL
+
+            qpL(i) = qp(i,1) - reconstr_coeff * dxL * qp_prime
+
+            qpR(i) = qp(i,1) + reconstr_coeff * dxR * qp_prime
+
+         ENDIF
+
+       ENDIF
+       
+    END DO
+    
+    DO i=1,n_vars
+       
+       IF ( bcL(i)%flag .EQ. 0 ) THEN
+          
+          qpL(i) = bcL(i)%value
+          
+       END IF
+       
+    END DO
+
+
+    ! Convert back from physical to conservative variables
+    CALL qp2_to_qc( qpL , B_stag(1) , q_interfaceR(1:n_vars,1) )
+    CALL qp2_to_qc( qpR , B_stag(2) , q_interfaceL(1:n_vars,2) )
+
+
+    DO i=1,n_vars
+
+       IF ( bcL(i)%flag .EQ. 0 ) THEN
+          
+          qp_bdry(i) = bcL(i)%value 
+          
+       ELSE
+          
+          !qp_bdry(i) = qpL(i)
+
+          ! fixed wall
+          IF(i.eq.2)THEN
+
+             qp_bdry(i) = -qpL(i)
+
+          ELSE
+
+             qp_bdry(i) = qpL(i)
+
+          ENDIF
+          
+       END IF
+
+    END DO
+
+    CALL qp2_to_qc( qp_bdry , B_stag(1) , q_interfaceL(:,1) )
+
+    ! Linear reconstruction of the physical variables for the internal cells
+    DO j = 2,comp_cells-1
+
+       x_stencil(1:3) = x_comp(j-1:j+1)
+
+       DO i=1,n_vars
+
+          qp_stencil = qp(i,j-1:j+1)
+
+          CALL limit( qp_stencil , x_stencil , limiter(i) , qp_prime ) 
+
+          dxL = x_comp(j) - x_stag(j)
+          qpL(i) = qp(i,j) - reconstr_coeff * dxL * qp_prime
+          
+          dxR = x_stag(j+1) - x_comp(j)
+          qpR(i) = qp(i,j) + reconstr_coeff * dxR * qp_prime
+
+          ! positivity preserving reconstruction for h
+          IF ( i .EQ. 1 ) THEN
+ 
+            IF ( qpR(i) .LT. 0.D0 ) THEN
+ 
+              qp_prime = - qp(i,j) / dxR
+
+              qpL(i) = qp(i,j) - reconstr_coeff * dxL * qp_prime
+
+              qpR(i) = qp(i,j) + reconstr_coeff * dxR * qp_prime
+
+            ENDIF
+
+            IF ( qpL(i) .LT. 0.D0 ) THEN
+
+              qp_prime = qp(i,j) / dxL
+
+              qpL(i) = qp(i,j) - reconstr_coeff * dxL * qp_prime
+
+              qpR(i) = qp(i,j) + reconstr_coeff * dxR * qp_prime
+
+            ENDIF
+
+          ENDIF
+          
+       END DO
+
+       ! Convert back from physical to conservative variables
+       CALL qp2_to_qc( qpL , B_stag(j) , q_interfaceR(:,j) )
+       CALL qp2_to_qc( qpR , B_stag(j+1) , q_interfaceL(:,j+1) )
+
+    END DO
+
+    ! Linear reconstruction of the physical variables at the boundaries
+    ! of the last cell (j=comp_cells)
+
+    DO i=1,n_vars
+       
+       IF ( bcR(i)%flag .EQ. 0 ) THEN
+          
+          qp_stencil(1:2) = qp(i,comp_cells-1:comp_cells)
+          qp_stencil(3) = bcR(i)%value
+          
+          x_stencil(1:2) = x_comp(comp_cells-1:comp_cells)
+          x_stencil(3) = x_stag(comp_interfaces)
+          
+          CALL limit( qp_stencil , x_stencil , limiter(i) , qp_prime ) 
+
+       ELSEIF ( bcR(i)%flag .EQ. 1 ) THEN
+        
+          qp_prime = bcR(i)%value
+          
+       ELSEIF ( bcR(i)%flag .EQ. 2 ) THEN
+        
+          qp_prime = ( qp(i,comp_cells) - qp(i,comp_cells-1) ) /                &
+               ( x_comp(comp_cells) - x_comp(comp_cells-1) )
+
+       END IF
+
+       dxL = x_comp(comp_cells) - x_stag(comp_interfaces-1)
+       qpL(i) = qp(i,comp_cells) - reconstr_coeff * dxL * qp_prime
+       
+       dxR = x_stag(comp_interfaces) - x_comp(comp_cells)
+       qpR(i) = qp(i,comp_cells) + reconstr_coeff * dxR * qp_prime
+
+       ! positivity preserving reconstruction for h
+       IF ( i .EQ. 1 ) THEN
+
+         IF ( qpR(i) .LT. 0.D0 ) THEN
+
+           qp_prime = - qp(i,comp_cells) / dxR
+
+           qpL(i) = qp(i,comp_cells) - reconstr_coeff * dxL * qp_prime
+
+           qpR(i) = qp(i,comp_cells) + reconstr_coeff * dxR * qp_prime
+
+         ENDIF
+
+         IF ( qpL(i) .LT. 0.D0 ) THEN
+
+           qp_prime = qp(i,comp_cells) / dxL
+
+           qpL(i) = qp(i,comp_cells) - reconstr_coeff * dxL * qp_prime
+
+           qpR(i) = qp(i,comp_cells) + reconstr_coeff * dxR * qp_prime
+
+         ENDIF
+
+       ENDIF
+       
+    END DO
+    
+    DO i=1,n_vars
+
+       IF ( bcR(i)%flag .EQ. 0 ) THEN
+          
+          qpR(i) = bcR(i)%value
+          
+       END IF
+
+    END DO
+
+    ! Convert back from physical to conservative variables
+    CALL qp2_to_qc( qpL , B_stag(comp_interfaces-1) , q_interfaceR(:,comp_interfaces-1) )
+    CALL qp2_to_qc( qpR , B_stag(comp_interfaces) , q_interfaceL(:,comp_interfaces) )
+  
+    DO i=1,n_vars
+
+       IF ( bcR(i)%flag .EQ. 0 ) THEN
+          
+          qp_bdry(i) = bcR(i)%value 
+          
+       ELSE
+          
+          !qp_bdry(i) = qpR(i)
+
+          ! fixed wall
+          IF(i.eq.2)THEN
+
+             qp_bdry(i) = -qpR(i)
+
+          ELSE
+
+             qp_bdry(i) = qpR(i)
+
+          ENDIF
+          
+       END IF
+
+    END DO
+
+    CALL qp2_to_qc( qp_bdry , B_stag(comp_interfaces) ,                          &
+        q_interfaceR(:,comp_interfaces) )
+
+  END SUBROUTINE reconstruction_phys2
 
   !******************************************************************************
   !> \brief Characteristic speeds
@@ -1745,7 +2553,7 @@ CONTAINS
   SUBROUTINE eval_speeds
 
     ! External procedures
-    USE constitutive, ONLY : eval_local_speeds
+    USE constitutive, ONLY : eval_local_speeds2
 
     IMPLICIT NONE
 
@@ -1757,9 +2565,9 @@ CONTAINS
 
     DO j = 1 , comp_interfaces
 
-       CALL eval_local_speeds( q_interfaceL(:,j) , B_stag(j) , abslambdaL_min , &
+       CALL eval_local_speeds2( q_interfaceL(:,j) , B_stag(j) , abslambdaL_min , &
                abslambdaL_max )
-       CALL eval_local_speeds( q_interfaceR(:,j) , B_stag(j) , abslambdaR_min , &
+       CALL eval_local_speeds2( q_interfaceR(:,j) , B_stag(j) , abslambdaR_min , &
                abslambdaR_max )
 
        min_r = MIN(abslambdaL_min , abslambdaR_min , 0.0D0)
@@ -1778,7 +2586,7 @@ CONTAINS
   !> \brief Slope limiter
   !
   !> This subroutine limits the slope of the linear reconstruction of 
-  !> the physical variables, accordingly to the parameter "limiter":\n
+  !> the physical variables, accordingly to the parameter "solve_limiter":\n
   !> - 'none'     => no limiter (constant value);
   !> - 'minmod'   => minmod slope;
   !> - 'superbee' => superbee limiter (Roe, 1985);
@@ -1836,7 +2644,7 @@ CONTAINS
 
        ! van_leer
 
-       slope_lim = minmod( 0.5D0*c , theta * minmod( a , b ) )
+       slope_lim = minmod( c , theta * minmod( a , b ) )
 
     END SELECT
 
@@ -1849,7 +2657,7 @@ CONTAINS
 
     REAL*8 :: a , b , sa , sb 
 
-    IF ( a*b .EQ. 0.D0 ) THEN
+    IF ( a*b .LE. 0.D0 ) THEN
 
        minmod = 0.d0
 

@@ -42,9 +42,9 @@ for i=1:nfiles,
         
     end
     
-    a = (reshape(data',4,[]))';
+    a = (reshape(data',5,[]))';
     
-    p = a(:,1:4);
+    p = a(:,1:5);
     
     x0 = str2double(strrep(textdata{1},'x0',''));
     dx = str2double(strrep(textdata{2},'dx',''));
@@ -60,7 +60,7 @@ for i=1:nfiles,
     
     subplot(nfiles,2,2*(i-1)+1);
     
-    plot(x,p(1:N,4),x,p(1:N,3));
+    plot(x,p(1:N,4),x,p(1:N,5));
     
     hold all;
     ylabel('Height (m)');
@@ -71,7 +71,7 @@ for i=1:nfiles,
     
     subplot(nfiles,2,2*(i-1)+2);
     
-    plot(x,p(1:N,2));
+    plot(x,p(1:N,3));
     str_title = ' Velocity --- t=';
     title([str_title,num2str(t)]);
     ylabel('Velocity (m)');

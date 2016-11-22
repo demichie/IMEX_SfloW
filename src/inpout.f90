@@ -13,9 +13,9 @@
 MODULE inpout
 
   ! -- Variables for the namelist RUN_PARAMETERS
-  USE parameters, ONLY : solver_scheme, max_dt , t_start , t_end ,              &
-       dt_output , cfl, limiter , theta, reconstr_coeff ,                       &
-       interfaces_relaxation , n_RK
+  USE parameters, ONLY : solver_scheme , max_dt , t_start , t_end ,              &
+       dt_output , cfl, limiter , theta , reconstr_coeff , reconstr_variables ,  &
+       interfaces_relaxation , n_RK , batimetry_function_flag , riemann_flag
 
   USE solver, ONLY : verbose_level
 
@@ -35,7 +35,6 @@ MODULE inpout
 
   ! -- Variables for the namelist SOURCE_PARAMETERS
   USE constitutive, ONLY : grav
-  USE constitutive, ONLY : friction_model
 
   IMPLICIT NONE
 
@@ -44,6 +43,7 @@ MODULE inpout
   CHARACTER(LEN=40) :: input_file         !< File with the run parameters
   CHARACTER(LEN=40) :: output_file        !< Name of the output files
   CHARACTER(LEN=40) :: restart_file       !< Name of the restart file 
+  CHARACTER(LEN=40) :: batimetry_file     !< Name of the batimetry file 
   CHARACTER(LEN=40) :: dakota_file        !< Name of the dakota file 
 
   INTEGER, PARAMETER :: input_unit = 7    !< Input data unit
@@ -68,9 +68,10 @@ MODULE inpout
   TYPE(bc) :: hB_bcR , u_bcR
 
 
-  NAMELIST / run_parameters / run_name , restart , max_dt ,                     & 
-       t_start , t_end , dt_output , solver_scheme ,                            &
-       cfl , limiter , theta , reconstr_coeff , n_RK , verbose_level
+  NAMELIST / run_parameters / run_name , restart , batimetry_function_flag ,    &
+       riemann_flag , max_dt , t_start , t_end , dt_output , solver_scheme ,    &
+       cfl , limiter , theta , reconstr_coeff , reconstr_variables , n_RK ,     &
+       verbose_level
 
   NAMELIST / restart_parameters / restart_file
 
@@ -84,7 +85,7 @@ MODULE inpout
 
   NAMELIST / right_boundary_conditions / hB_bcR , u_bcR
 
-  NAMELIST / source_parameters / grav , friction_model
+  NAMELIST / source_parameters / grav
 
 CONTAINS
 
@@ -114,6 +115,8 @@ CONTAINS
     !-- Inizialization of the Variables for the namelist RUN_PARAMETERS
     run_name = 'default'
     restart = .FALSE.
+    batimetry_function_flag=.FALSE.
+    riemann_flag=.TRUE.
     max_dt = 1.d-3
     t_start = 0.0
     t_end = 5.0d-4
@@ -127,7 +130,7 @@ CONTAINS
     limiter(1:n_vars) = 0
     theta=1.0
     reconstr_coeff = 1.0
-
+    reconstr_variables = 0
     !-- Inizialization of the Variables for the namelist restart parameters
     restart_file = ''
 
@@ -163,7 +166,6 @@ CONTAINS
 
     !-- Inizialization of the Variables for the namelist source_parameters
     grav = -9.81D0
-    friction_model = 'none'
 
     input_file = 'shallow_water.inp'
 
@@ -302,6 +304,15 @@ CONTAINS
 
     END IF
 
+    IF ( ( reconstr_variables .GT. 2 ) .OR. ( reconstr_variables .LT. 0 ) ) THEN
+
+       WRITE(*,*)'WARNING: wrong value of reconstr_variables ',reconstr_variables
+       WRITE(*,*)'Choose the value among: 0, 1 and 2'
+       READ(*,*)
+
+    END IF
+
+
     IF ( restart ) THEN
 
        READ(input_unit,restart_parameters)
@@ -309,8 +320,13 @@ CONTAINS
     ELSE
 
        READ(input_unit,newrun_parameters)
-       READ(input_unit,left_state)
-       READ(input_unit,right_state)
+
+       IF ( riemann_flag ) THEN
+       
+          READ(input_unit,left_state)
+          READ(input_unit,right_state)
+
+       END IF
 
     END IF
 
@@ -377,8 +393,13 @@ CONTAINS
     ELSE
 
        WRITE(backup_unit,newrun_parameters)
-       WRITE(backup_unit,left_state)
-       WRITE(backup_unit,right_state)
+
+       IF ( riemann_flag ) THEN
+
+          WRITE(backup_unit,left_state)
+          WRITE(backup_unit,right_state)
+
+       END IF
 
     END IF
 
@@ -447,6 +468,7 @@ CONTAINS
 
 
     DO i = 1,n_vars
+
        DO j = 1,comp_cells
 
           ! Exponents with more than 2 digits cause problems reading
@@ -491,7 +513,7 @@ CONTAINS
 
     ! external variables
     USE constitutive, ONLY : h , u
-    USE geometry , ONLY : comp_cells , x0 , dx , B_cent
+    USE geometry , ONLY : comp_cells , x0 , dx , x_comp , B_cent
     USE parameters, ONLY : n_vars
     USE parameters, ONLY : t_output , dt_output
     USE solver, ONLY : q
@@ -520,6 +542,7 @@ CONTAINS
     WRITE(output_unit,1002) x0,dx,comp_cells,t
 
     DO j = 1,comp_cells
+
        DO i = 1,n_vars
 
           ! Exponents with more than 2 digits cause problems reading
@@ -528,7 +551,7 @@ CONTAINS
 
        END DO
 
-       WRITE(output_unit,1005) (q(i,j), i=1,n_vars)
+       WRITE(output_unit,*) (q(i,j), i=1,n_vars)
 
     END DO
 
@@ -557,7 +580,11 @@ CONTAINS
 
        CALL qc_to_qp(q(:,j),B_cent(j),qp(:))
 
-       WRITE(output_unit,1005) REAL(h) , REAL(u) , B_cent(j) ,                &
+       IF ( REAL(h) .LT. 1d-99) h = 0.d0
+       IF ( ABS(REAL(u)) .LT. 1d-99) u = 0.d0
+
+
+       WRITE(output_unit,1005) x_comp(j), REAL(h) , REAL(u) , B_cent(j) ,           &
             REAL(h) + B_cent(j)
 
     END DO
@@ -570,7 +597,7 @@ CONTAINS
 1002 FORMAT(e18.8,'    x0', /, e18.8,'    dx', /, i18,'    cells', /, e18.8,'    t', /)
 
 
-1005 FORMAT(4e20.12)
+1005 FORMAT(5e20.12)
 
 
     t_output = t + dt_output

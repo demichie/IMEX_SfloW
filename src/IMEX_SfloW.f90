@@ -32,8 +32,9 @@ PROGRAM IMEX_SfloW
   USE constitutive, ONLY : init_problem_param
 
   USE geometry, ONLY : init_grid
+  USE geometry, ONLY : B_cent , dx
 
-  USE init, ONLY : riemann_problem
+  USE init, ONLY : riemann_problem, initial_conditions
 
   USE inpout, ONLY : init_param
   USE inpout, ONLY : read_param
@@ -49,10 +50,10 @@ PROGRAM IMEX_SfloW
 
   USE inpout, ONLY : restart
 
-
   USE parameters, ONLY : t_start
   USE parameters, ONLY : t_end
   USE parameters, ONLY : t_output
+  USE parameters, ONLY : riemann_flag
 
   USE solver, ONLY : q , dt
 
@@ -79,7 +80,17 @@ PROGRAM IMEX_SfloW
 
      CALL allocate_solver_variables
 
-     CALL riemann_problem
+     ! riemann problem defined in file.inp
+     IF(riemann_flag.EQV..TRUE.)THEN
+
+        CALL riemann_problem
+
+     ! generic problem defined by initial conditions function (in init.f90)
+     ELSE
+
+        CALL initial_conditions
+
+     ENDIF
 
   END IF
 
@@ -100,7 +111,7 @@ PROGRAM IMEX_SfloW
 
      t = t+dt
 
-     WRITE(*,*) 't =',t,' dt =',dt
+     WRITE(*,*) 't =',t,' dt =',dt,' h_tot =',dx*(SUM(q(1,:)-B_cent(:)))
 
      IF ( ( t .GE. t_output ) .OR. ( t .GE. t_end ) ) CALL output_solution(t)
 

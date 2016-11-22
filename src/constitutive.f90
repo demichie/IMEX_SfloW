@@ -9,12 +9,14 @@ MODULE constitutive
 
   LOGICAL, ALLOCATABLE :: implicit_flag(:)
 
-  CHARACTER(LEN=20) :: friction_model
+  CHARACTER(LEN=20) :: phase1_name
+  CHARACTER(LEN=20) :: phase2_name
 
   !--------- Constants for the equations of state -----------------------------
 
+
   COMPLEX*16 :: h      !< height
-  COMPLEX*16 :: u      !< velocity
+  COMPLEX*16 :: u      !< velocity (x direction)
 
   !> gravitational acceleration
   REAL*8 :: grav
@@ -75,15 +77,17 @@ CONTAINS
 
     END IF
 
-    h = qj(1) - Bj
+    h = qj(1) - DCMPLX( Bj , 0.D0 )
 
+    
+    ! Correction for small values of h (Eq. 2.17 K&P 2007)
     IF ( REAL( h ) .GT. eps_sing ** 0.25D0 ) THEN
 
        u = qj(2) / h 
 
     ELSE
 
-       u = DSQRT(2.D0) * h * qj(2) / CDSQRT( h**4 + eps_sing )
+       u = DSQRT(2.D0) * h * qj(2) / CDSQRT( h**4 + DCMPLX(eps_sing,0.D0) )
 
     END IF
 
@@ -92,8 +96,9 @@ CONTAINS
   !******************************************************************************
   !> \brief Local Characteristic speeds
   !
-  !> This subroutine evaluates an the largest positive
-  !> and negative characteristic speed for the state qj. 
+  !> This subroutine evaluates an the largest pos and neg characteristic speeds
+  !> from the conservative variables qj, without any change on u and h, changing
+  !> u when h is small (Eq. 2.17 K&P 2007).
   !> \date 10/04/2012
   !******************************************************************************
 
@@ -105,12 +110,51 @@ CONTAINS
     REAL*8, INTENT(IN)  :: Bj
     REAL*8, INTENT(OUT) :: vel_min(n_vars) , vel_max(n_vars)
 
+    REAL*8 :: h_temp , u_temp
+
     CALL phys_var(Bj,r_qj = qj)
     
     vel_min(1:n_eqns) = REAL(u) - DSQRT( grav * REAL(h) ) 
     vel_max(1:n_eqns) = REAL(u) + DSQRT( grav * REAL(h) )
 
   END SUBROUTINE eval_local_speeds
+  !******************************************************************************
+  !> \brief Local Characteristic speeds
+  !
+  !> This subroutine evaluates an the largest pos and neg characteristic speeds
+  !> from the conservative variables qj, without any change on u and h.
+  !> \date 10/04/2012
+  !******************************************************************************
+
+  SUBROUTINE eval_local_speeds2(qj,Bj,vel_min,vel_max)
+    
+    IMPLICIT none
+    
+    REAL*8, INTENT(IN)  :: qj(n_vars)
+    REAL*8, INTENT(IN)  :: Bj
+    REAL*8, INTENT(OUT) :: vel_min(n_vars) , vel_max(n_vars)
+
+    REAL*8 :: h_temp , u_temp
+
+    h_temp = qj(1) - Bj
+
+    IF ( h_temp .NE. 0.D0 ) THEN
+
+       u_temp = qj(2) / h_temp
+
+    ELSE
+
+       u_temp = 0.D0
+
+    END IF
+
+    vel_min(1:n_eqns) = REAL(u_temp) - DSQRT( grav * REAL(h_temp) ) 
+    vel_max(1:n_eqns) = REAL(u_temp) + DSQRT( grav * REAL(h_temp) )
+
+
+  END SUBROUTINE eval_local_speeds2
+
+
 
   !******************************************************************************
   !> \brief Conservative to physical variables
@@ -121,7 +165,10 @@ CONTAINS
   !> - qp(2) = \f$ u \f$
   !> .
   !> The physical variables are those used for the linear reconstruction at the
-  !> cell interfaces. Limiters are applied to the reconstructed slopes.
+  !> cell interfaces (limiters are applied to the reconstructed slopes) and for 
+  !> the boundary conditions. 
+  !> Please note that the physical variable u is modified according to Eq. 2.17 
+  !> of K&P 2007 by the call to the subroutine phys_var.
   !> \param[in]     qc      conservative variables 
   !> \param[out]    qp      physical variables  
   !> \date 15/08/2011
@@ -136,9 +183,10 @@ CONTAINS
     REAL*8, INTENT(OUT) :: qp(n_vars)
     
     CALL phys_var(B,r_qj = qc)
-        
+          
     qp(1) = REAL(h+B)
     qp(2) = REAL(u)
+
     
   END SUBROUTINE qc_to_qp
 
@@ -176,12 +224,77 @@ CONTAINS
   END SUBROUTINE qp_to_qc
 
   !******************************************************************************
+  !> \brief Conservative to 2nd set of physical variables
+  !
+  !> This subroutine evaluates from the conservative variables qc the 
+  !> array of physical variables qp:\n
+  !> - qp(1) = \f$ h \f$
+  !> - qp(2) = \f$ u \f$
+  !> .
+  !> The physical variables are those used for the linear reconstruction at the
+  !> cell interfaces. Limiters are applied to the reconstructed slopes.
+  !> \param[in]     qc      conservative variables 
+  !> \param[out]    qp      physical variables  
+  !> \date 15/08/2011
+  !******************************************************************************
+  
+  SUBROUTINE qc_to_qp2(qc,B,qp)
+    
+    IMPLICIT none
+    
+    REAL*8, INTENT(IN) :: qc(n_vars)
+    REAL*8, INTENT(IN) :: B
+    REAL*8, INTENT(OUT) :: qp(n_vars)
+    
+    CALL phys_var(B,r_qj = qc)
+          
+    qp(1) = REAL(h)
+    qp(2) = REAL(u)
+
+    
+  END SUBROUTINE qc_to_qp2
+
+
+  !******************************************************************************
+  !> \brief From 2nd set of physical to conservative variables
+  !
+  !> This subroutine evaluates the conservative variables qc from the 
+  !> array of physical variables qp:\n
+  !> - qp(1) = \f$ h \f$
+  !> - qp(2) = \f$ u \f$
+  !> .
+  !> \param[in]    qp      physical variables  
+  !> \param[out]   qc      conservative variables 
+  !> \date 15/08/2011
+  !******************************************************************************
+
+  SUBROUTINE qp2_to_qc(qp,B,qc)
+    
+    USE COMPLEXIFY 
+    IMPLICIT none
+    
+    REAL*8, INTENT(IN) :: qp(n_vars)
+    REAL*8, INTENT(IN) :: B
+    REAL*8, INTENT(OUT) :: qc(n_vars)
+    
+    REAL*8 :: r_h      !> batimetry + height 
+    REAL*8 :: r_u       !> velocity
+    
+    r_h = qp(1)
+    r_u = qp(2)
+    
+    qc(1) = r_h + B
+    qc(2) = r_h * r_u
+
+  END SUBROUTINE qp2_to_qc
+
+  !******************************************************************************
   !> \brief Hyperbolic Fluxes
   !
   !> This subroutine evaluates the numerical fluxes given the conservative
   !> variables qj, accordingly to the equations for the single temperature
   !> model introduced in Romenki et al. 2010.
-  !> \date 01/06/2012
+  !> \date 22/11/2016
   !> \param[in]     c_qj     complex conservative variables 
   !> \param[in]     r_qj     real conservative variables 
   !> \param[out]    c_flux   complex analytical fluxes    
@@ -222,11 +335,19 @@ CONTAINS
        STOP
 
     END IF
-       
+   
     flux(1) = qj(2)
     
-    flux(2) = qj(2)**2.D0 / ( qj(1) - Bj ) + 0.5D0 * grav * ( qj(1) - Bj ) ** 2.D0  
-    
+    ! check if h is small
+    IF((qj(1)-Bj).GT.10.d0**(-8))THEN
+
+      flux(2) = qj(2)**2.D0 / ( qj(1) - Bj ) + 0.5D0 * grav * ( qj(1) - Bj ) ** 2.D0 
+
+    ELSE
+
+      flux(2) = 0.d0
+
+    ENDIF    
 
     IF ( present(c_qj) .AND. present(c_flux) ) THEN
 
@@ -338,34 +459,15 @@ CONTAINS
 
     REAL*8, INTENT(IN) :: qj(n_eqns)                 !< conservative variables 
     REAL*8, INTENT(OUT) :: expl_forces_term(n_eqns)  !< explicit forces 
-   
-    REAL*8 :: frict_coeff
 
     expl_forces_term(1:n_eqns) = 0.D0
 
     CALL phys_var(Bj,r_qj = qj)
 
-    SELECT CASE ( friction_model)
-       
-    CASE DEFAULT
-       
-       frict_coeff = 0.D0
-       
-    CASE ('None')
+    expl_forces_term(2) = grav * h * Bprimej
 
-       frict_coeff = 0.D0
-
-    CASE ('KP2007')
-
-       frict_coeff = 1.D-3 / ( 1.D0 + 10.D0 * REAL(h) )
-
-    END SELECT
-
-    expl_forces_term(2) = grav * ( qj(1) - Bj ) * Bprimej +                     &
-         frict_coeff * REAL(u)
-
-    RETURN
-
+    ! friction term
+    expl_forces_term(2) = expl_forces_term(2) + ( 0.001 / (1.D0+10.D0*h) ) * u
 
   END SUBROUTINE eval_explicit_forces
 
