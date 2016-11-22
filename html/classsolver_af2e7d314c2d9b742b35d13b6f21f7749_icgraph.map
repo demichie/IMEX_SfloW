@@ -1,4 +1,6 @@
 <map id="solver::maxmod" name="solver::maxmod">
-<area shape="rect" id="node2" href="$classsolver.html#a1e984687b80ab90c8da259749a81b166" title="Slope limiter. " alt="" coords="169,5,258,32"/>
-<area shape="rect" id="node3" href="$classsolver.html#a771105a90a22d5d782400a0e9b60273a" title="Linear reconstruction. " alt="" coords="307,5,453,32"/>
+<area shape="rect" id="node2" href="$classsolver.html#a1e984687b80ab90c8da259749a81b166" title="Slope limiter. " alt="" coords="169,64,258,91"/>
+<area shape="rect" id="node3" href="$classsolver.html#a2b3edd2067c183b0d1661eecc68c133e" title="Linear reconstruction. " alt="" coords="307,5,490,32"/>
+<area shape="rect" id="node4" href="$classsolver.html#aeae86642bf619dd9e164bf1423248df9" title="Linear reconstruction. " alt="" coords="325,57,472,98"/>
+<area shape="rect" id="node5" href="$classsolver.html#a3090a0cd8d30ce766e4009aec32c53cd" title="Linear reconstruction. " alt="" coords="325,122,472,163"/>
 </map>

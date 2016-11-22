@@ -7,3 +7,4 @@
 \form#6:$\alpha_1, p_1, p_2, \rho u, w, T$
 \form#7:$ Q^{(i)} = Q^n - dt \sum_{j=1}^{i-1}\tilde{a}_{j}\partial_x F(Q^{(j)}) + dt \sum_{j=1}^{i-1} a_j NH(Q^{(j)}) + dt a_{diag} NH(Q^{(i)}) $
 \form#8:$\alpha_1, p_1, p_2, \rho u, w, T $
+\form#9:$ h $

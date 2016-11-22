@@ -102,6 +102,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6b867c3cf2a8ec4f958668a925dee56f"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgeometry.html#a6b867c3cf2a8ec4f958668a925dee56f">interp_1d_scalar</a> (x1, f1, x2, f2)</td></tr>
 <tr class="memdesc:a6b867c3cf2a8ec4f958668a925dee56f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scalar interpolation.  <a href="#a6b867c3cf2a8ec4f958668a925dee56f">More...</a><br /></td></tr>
 <tr class="separator:a6b867c3cf2a8ec4f958668a925dee56f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63073e1e0181295cbdcc3c8a85f4d91d"><td class="memItemLeft" align="right" valign="top">real *8 function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgeometry.html#a63073e1e0181295cbdcc3c8a85f4d91d">batimetry_function</a> (x)</td></tr>
+<tr class="memdesc:a63073e1e0181295cbdcc3c8a85f4d91d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Batimetry function.  <a href="#a63073e1e0181295cbdcc3c8a85f4d91d">More...</a><br /></td></tr>
+<tr class="separator:a63073e1e0181295cbdcc3c8a85f4d91d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -147,6 +150,42 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Definition at line <a class="el" href="geometry_8f90_source.html#l00007">7</a> of file <a class="el" href="geometry_8f90_source.html">geometry.f90</a>.</p>
 </div><h2 class="groupheader">Member Function/Subroutine Documentation</h2>
+<a class="anchor" id="a63073e1e0181295cbdcc3c8a85f4d91d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">real*8 function geometry::batimetry_function </td>
+          <td>(</td>
+          <td class="paramtype">real*8, intent(in)&#160;</td>
+          <td class="paramname"><em>x</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Batimetry function. </p>
+<p>This subroutine generates a point of the batimetry from the input x grid point </p><dl class="section date"><dt>Date</dt><dd>OCTOBER 2016 </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td>original grid (<b>input</b>) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="geometry_8f90_source.html#l00206">206</a> of file <a class="el" href="geometry_8f90_source.html">geometry.f90</a>.</p>
+
+<p><div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classgeometry_a63073e1e0181295cbdcc3c8a85f4d91d_icgraph.png" border="0" usemap="#classgeometry_a63073e1e0181295cbdcc3c8a85f4d91d_icgraph" alt=""/></div>
+<map name="classgeometry_a63073e1e0181295cbdcc3c8a85f4d91d_icgraph" id="classgeometry_a63073e1e0181295cbdcc3c8a85f4d91d_icgraph">
+<area shape="rect" id="node2" href="classgeometry.html#a847520e028099966e11b6ced202e6348" title="Finite volume grid initialization. " alt="" coords="194,23,323,50"/><area shape="rect" id="node5" href="classinit.html#a38bc0ac60acb730e29b9026ac74790a3" title="Water function. " alt="" coords="193,74,325,101"/><area shape="rect" id="node3" href="IMEX__SfloW_8f90.html#a80b23a8cfea2702ae5a30733d93bd742" title="Github project page: http://demichie.github.io/IMEX_SfloW/ &#160;. " alt="" coords="565,23,653,50"/><area shape="rect" id="node4" href="classinpout.html#ab2438d8b9a5fea8b1b97cc47d933e20d" title="Read the solution from the restart unit. " alt="" coords="374,23,517,50"/><area shape="rect" id="node6" href="classinit.html#ab36461581b6f2751245a3e6c3a634f5e" title="Problem initialization. " alt="" coords="374,74,517,101"/></map>
+</div>
+</p>
+
+</div>
+</div>
 <a class="anchor" id="a847520e028099966e11b6ced202e6348"></a>
 <div class="memitem">
 <div class="memproto">
@@ -170,7 +209,7 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classgeometry_a847520e028099966e11b6ced202e6348_cgraph.png" border="0" usemap="#classgeometry_a847520e028099966e11b6ced202e6348_cgraph" alt=""/></div>
 <map name="classgeometry_a847520e028099966e11b6ced202e6348_cgraph" id="classgeometry_a847520e028099966e11b6ced202e6348_cgraph">
-<area shape="rect" id="node2" href="classgeometry.html#a6b867c3cf2a8ec4f958668a925dee56f" title="Scalar interpolation. " alt="" coords="185,5,322,46"/></map>
+<area shape="rect" id="node2" href="classgeometry.html#a6b867c3cf2a8ec4f958668a925dee56f" title="Scalar interpolation. " alt="" coords="185,5,322,46"/><area shape="rect" id="node3" href="classgeometry.html#a63073e1e0181295cbdcc3c8a85f4d91d" title="Batimetry function. " alt="" coords="184,70,323,111"/></map>
 </div>
 </p>
 
@@ -233,7 +272,7 @@ Here is the caller graph for this function:</div>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="geometry_8f90_source.html#l00116">116</a> of file <a class="el" href="geometry_8f90_source.html">geometry.f90</a>.</p>
+<p>Definition at line <a class="el" href="geometry_8f90_source.html#l00154">154</a> of file <a class="el" href="geometry_8f90_source.html">geometry.f90</a>.</p>
 
 <p><div class="dynheader">
 Here is the caller graph for this function:</div>
@@ -441,7 +480,7 @@ Here is the caller graph for this function:</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Oct 7 2016 10:30:54 for IMEXSfloW by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Nov 22 2016 16:23:06 for IMEXSfloW by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

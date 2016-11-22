@@ -1,8 +1,11 @@
 <map id="constitutive::qc_to_qp" name="constitutive::qc_to_qp">
-<area shape="rect" id="node2" href="$classinpout.html#a7b0af495f327e7c3330229aeb1675455" title="Write the solution on the output unit. " alt="" coords="401,5,554,32"/>
-<area shape="rect" id="node4" href="$classsolver.html#a6e04b0e028b9df0618bfca1f81a242d9" title="Runge&#45;Kutta integration. " alt="" coords="603,95,757,121"/>
-<area shape="rect" id="node5" href="$classsolver.html#ae2eb7c814ea1a09c2ae644fa3bf9d6b7" title="Runge&#45;Kutta single step integration. " alt="" coords="205,107,352,133"/>
-<area shape="rect" id="node6" href="$classsolver.html#a771105a90a22d5d782400a0e9b60273a" title="Linear reconstruction. " alt="" coords="205,161,352,188"/>
-<area shape="rect" id="node3" href="$IMEX__SfloW_8f90.html#a80b23a8cfea2702ae5a30733d93bd742" title="Github project page: http://demichie.github.io/IMEX_SfloW/ &#160;. " alt="" coords="805,57,893,84"/>
-<area shape="rect" id="node7" href="$classsolver.html#a4dc2ff97b9bfd8d78c59c693fbf1baf4" title="Semidiscrete finite volume central scheme. " alt="" coords="400,158,555,199"/>
+<area shape="rect" id="node2" href="$classinpout.html#a7b0af495f327e7c3330229aeb1675455" title="Write the solution on the output unit. " alt="" coords="641,8,794,35"/>
+<area shape="rect" id="node4" href="$classsolver.html#a6e04b0e028b9df0618bfca1f81a242d9" title="Runge&#45;Kutta integration. " alt="" coords="641,84,794,111"/>
+<area shape="rect" id="node5" href="$classsolver.html#ae2eb7c814ea1a09c2ae644fa3bf9d6b7" title="Runge&#45;Kutta single step integration. " alt="" coords="441,33,588,60"/>
+<area shape="rect" id="node6" href="$classsolver.html#a2b3edd2067c183b0d1661eecc68c133e" title="Linear reconstruction. " alt="" coords="206,135,389,161"/>
+<area shape="rect" id="node9" href="$classsolver.html#aeae86642bf619dd9e164bf1423248df9" title="Linear reconstruction. " alt="" coords="224,186,371,227"/>
+<area shape="rect" id="node10" href="$classsolver.html#a3090a0cd8d30ce766e4009aec32c53cd" title="Linear reconstruction. " alt="" coords="224,251,371,293"/>
+<area shape="rect" id="node3" href="$IMEX__SfloW_8f90.html#a80b23a8cfea2702ae5a30733d93bd742" title="Github project page: http://demichie.github.io/IMEX_SfloW/ &#160;. " alt="" coords="843,84,931,111"/>
+<area shape="rect" id="node7" href="$classsolver.html#abd4348ce0a419f02bddd356dfa5470bc" title="Time&#45;step computation. " alt="" coords="457,201,572,228"/>
+<area shape="rect" id="node8" href="$classsolver.html#a4dc2ff97b9bfd8d78c59c693fbf1baf4" title="Semidiscrete finite volume central scheme. " alt="" coords="437,135,592,177"/>
 </map>

@@ -98,116 +98,128 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classconstitutive.html">constitutive</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classconstitutive.html#a0b272e23604e3f6f6fc247a1b2c2ec9d">init_problem_param</a></div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classgeometry.html">geometry</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classgeometry.html#a847520e028099966e11b6ced202e6348">init_grid</a></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classinit.html">init</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classinit.html#af721a6c340570c4c94e29b5b463cda35">riemann_problem</a></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classinpout.html">inpout</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classinpout.html#ada96f5c8fb386e998bad52ca718cfa90">init_param</a></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classinpout.html">inpout</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classinpout.html#a48fa95e34c9eb0896f65d0e07fd6bb8c">read_param</a></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classinpout.html">inpout</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classinpout.html#a7b0af495f327e7c3330229aeb1675455">output_solution</a></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classinpout.html">inpout</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classinpout.html#ab2438d8b9a5fea8b1b97cc47d933e20d">read_solution</a></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classinpout.html">inpout</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classinpout.html#afaadcd2f12348203dde67f2d0c7a0267">close_units</a></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classinpout.html">inpout</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classinpout.html#a5509aa72c5872c593a25bb9cb35b5282">output_dakota</a></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classsolver.html">solver</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classsolver.html#a8bb20ebeb5efbdf3c486ddbee2d506c3">allocate_solver_variables</a></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classsolver.html">solver</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classsolver.html#aff22faa038a10b97f3c95993a368b206">deallocate_solver_variables</a></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classsolver.html">solver</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classsolver.html#a6e04b0e028b9df0618bfca1f81a242d9">imex_rk_solver</a></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classsolver.html">solver</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classsolver.html#abd4348ce0a419f02bddd356dfa5470bc">timestep</a></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classinpout.html">inpout</a><span class="keywordtype">, ONLY</span> : restart</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classgeometry.html">geometry</a><span class="keywordtype">, ONLY</span> : b_cent , dx</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classinit.html">init</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classinit.html#af721a6c340570c4c94e29b5b463cda35">riemann_problem</a>, <a class="code" href="classinit.html#ab36461581b6f2751245a3e6c3a634f5e">initial_conditions</a></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classinpout.html">inpout</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classinpout.html#ada96f5c8fb386e998bad52ca718cfa90">init_param</a></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classinpout.html">inpout</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classinpout.html#a48fa95e34c9eb0896f65d0e07fd6bb8c">read_param</a></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classinpout.html">inpout</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classinpout.html#a7b0af495f327e7c3330229aeb1675455">output_solution</a></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classinpout.html">inpout</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classinpout.html#ab2438d8b9a5fea8b1b97cc47d933e20d">read_solution</a></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classinpout.html">inpout</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classinpout.html#afaadcd2f12348203dde67f2d0c7a0267">close_units</a></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classinpout.html">inpout</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classinpout.html#a5509aa72c5872c593a25bb9cb35b5282">output_dakota</a></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classsolver.html">solver</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classsolver.html#a8bb20ebeb5efbdf3c486ddbee2d506c3">allocate_solver_variables</a></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classsolver.html">solver</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classsolver.html#aff22faa038a10b97f3c95993a368b206">deallocate_solver_variables</a></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classsolver.html">solver</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classsolver.html#a6e04b0e028b9df0618bfca1f81a242d9">imex_rk_solver</a></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classsolver.html">solver</a><span class="keywordtype">, ONLY</span> : <a class="code" href="classsolver.html#abd4348ce0a419f02bddd356dfa5470bc">timestep</a></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classinpout.html">inpout</a><span class="keywordtype">, ONLY</span> : restart</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classparameters.html">parameters</a><span class="keywordtype">, ONLY</span> : t_start</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classparameters.html">parameters</a><span class="keywordtype">, ONLY</span> : t_end</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classparameters.html">parameters</a><span class="keywordtype">, ONLY</span> : t_output</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classsolver.html">solver</a><span class="keywordtype">, ONLY</span> : q , dt</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="keywordtype">IMPLICIT NONE</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  <span class="keywordtype">REAL*8</span> :: t</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  <span class="keywordtype">REAL*8</span> :: t1 , t2</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  CALL cpu_time(t1)</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  CALL <a class="code" href="classinpout.html#ada96f5c8fb386e998bad52ca718cfa90">init_param</a></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  CALL <a class="code" href="classinpout.html#a48fa95e34c9eb0896f65d0e07fd6bb8c">read_param</a></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="keywordflow">IF</span> ( restart ) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;     CALL <a class="code" href="classinpout.html#ab2438d8b9a5fea8b1b97cc47d933e20d">read_solution</a></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keywordflow">ELSE</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;     CALL <a class="code" href="classgeometry.html#a847520e028099966e11b6ced202e6348">init_grid</a></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;     CALL <a class="code" href="classconstitutive.html#a0b272e23604e3f6f6fc247a1b2c2ec9d">init_problem_param</a></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;     CALL <a class="code" href="classsolver.html#a8bb20ebeb5efbdf3c486ddbee2d506c3">allocate_solver_variables</a></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;     CALL <a class="code" href="classinit.html#af721a6c340570c4c94e29b5b463cda35">riemann_problem</a></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keywordflow">END IF</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classparameters.html">parameters</a><span class="keywordtype">, ONLY</span> : riemann_flag</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="keywordtype">USE </span><a class="code" href="classsolver.html">solver</a><span class="keywordtype">, ONLY</span> : q , dt</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="keywordtype">IMPLICIT NONE</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  <span class="keywordtype">REAL*8</span> :: t</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <span class="keywordtype">REAL*8</span> :: t1 , t2</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  CALL cpu_time(t1)</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  CALL <a class="code" href="classinpout.html#ada96f5c8fb386e998bad52ca718cfa90">init_param</a></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  CALL <a class="code" href="classinpout.html#a48fa95e34c9eb0896f65d0e07fd6bb8c">read_param</a></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  <span class="keywordflow">IF</span> ( restart ) <span class="keywordflow">THEN</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;     CALL <a class="code" href="classinpout.html#ab2438d8b9a5fea8b1b97cc47d933e20d">read_solution</a></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  <span class="keywordflow">ELSE</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;     CALL <a class="code" href="classgeometry.html#a847520e028099966e11b6ced202e6348">init_grid</a></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;     CALL <a class="code" href="classconstitutive.html#a0b272e23604e3f6f6fc247a1b2c2ec9d">init_problem_param</a></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;     CALL <a class="code" href="classsolver.html#a8bb20ebeb5efbdf3c486ddbee2d506c3">allocate_solver_variables</a></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;     <span class="comment">! riemann problem defined in file.inp</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;     <span class="keywordflow">IF</span>(riemann_flag.EQV..true.)<span class="keywordflow">THEN</span></div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  t = t_start</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        CALL <a class="code" href="classinit.html#af721a6c340570c4c94e29b5b463cda35">riemann_problem</a></div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="keyword">WRITE</span>(*,*) <span class="stringliteral">&#39;t_start =&#39;</span>,t</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  CALL <a class="code" href="classinpout.html#a7b0af495f327e7c3330229aeb1675455">output_solution</a>(t)</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keywordflow">DO</span> <span class="keywordflow">WHILE</span> ( t .LT. t_end )</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;     CALL <a class="code" href="classsolver.html#abd4348ce0a419f02bddd356dfa5470bc">timestep</a></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;     <span class="keywordflow">IF</span> ( t+dt .GT. t_end ) dt = t_end - t</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;     <span class="keywordflow">IF</span> ( t+dt .GT. t_output ) dt = t_output - t</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;     <span class="comment">! generic problem defined by initial conditions function (in init.f90)</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;     <span class="keywordflow">ELSE</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        CALL <a class="code" href="classinit.html#ab36461581b6f2751245a3e6c3a634f5e">initial_conditions</a></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;     <span class="keywordflow">ENDIF</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  <span class="keywordflow">END IF</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  t = t_start</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;     CALL <a class="code" href="classsolver.html#a6e04b0e028b9df0618bfca1f81a242d9">imex_rk_solver</a></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  <span class="keyword">WRITE</span>(*,*) <span class="stringliteral">&#39;t_start =&#39;</span>,t</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;     t = t+dt</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  CALL <a class="code" href="classinpout.html#a7b0af495f327e7c3330229aeb1675455">output_solution</a>(t)</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;     <span class="keyword">WRITE</span>(*,*) <span class="stringliteral">&#39;t =&#39;</span>,t,<span class="stringliteral">&#39; dt =&#39;</span>,dt</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  <span class="keywordflow">DO</span> <span class="keywordflow">WHILE</span> ( t .LT. t_end )</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;     <span class="keywordflow">IF</span> ( ( t .GE. t_output ) .OR. ( t .GE. t_end ) ) CALL <a class="code" href="classinpout.html#a7b0af495f327e7c3330229aeb1675455">output_solution</a>(t)</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;     CALL <a class="code" href="classsolver.html#abd4348ce0a419f02bddd356dfa5470bc">timestep</a></div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  <span class="keywordflow">END DO</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  CALL <a class="code" href="classinpout.html#a5509aa72c5872c593a25bb9cb35b5282">output_dakota</a></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  CALL <a class="code" href="classsolver.html#aff22faa038a10b97f3c95993a368b206">deallocate_solver_variables</a></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  CALL <a class="code" href="classinpout.html#afaadcd2f12348203dde67f2d0c7a0267">close_units</a></div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  CALL cpu_time(t2)</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  <span class="keyword">WRITE</span>(*,*) <span class="stringliteral">&#39;Time taken by the code was&#39;</span>,t2-t1,<span class="stringliteral">&#39;seconds&#39;</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="keyword">END PROGRAM </span><a class="code" href="IMEX__SfloW_8f90.html#a80b23a8cfea2702ae5a30733d93bd742">imex_sflow</a></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
-<div class="ttc" id="classsolver_html_a6e04b0e028b9df0618bfca1f81a242d9"><div class="ttname"><a href="classsolver.html#a6e04b0e028b9df0618bfca1f81a242d9">solver::imex_rk_solver</a></div><div class="ttdeci">subroutine imex_rk_solver</div><div class="ttdoc">Runge-Kutta integration. </div><div class="ttdef"><b>Definition:</b> <a href="solver_8f90_source.html#l00376">solver.f90:376</a></div></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;     <span class="keywordflow">IF</span> ( t+dt .GT. t_end ) dt = t_end - t</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;     <span class="keywordflow">IF</span> ( t+dt .GT. t_output ) dt = t_output - t</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;     CALL <a class="code" href="classsolver.html#a6e04b0e028b9df0618bfca1f81a242d9">imex_rk_solver</a></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;     t = t+dt</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;     <span class="keyword">WRITE</span>(*,*) <span class="stringliteral">&#39;t =&#39;</span>,t,<span class="stringliteral">&#39; dt =&#39;</span>,dt,<span class="stringliteral">&#39; h_tot =&#39;</span>,dx*(sum(q(1,:)-b_cent(:)))</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;     <span class="keywordflow">IF</span> ( ( t .GE. t_output ) .OR. ( t .GE. t_end ) ) CALL <a class="code" href="classinpout.html#a7b0af495f327e7c3330229aeb1675455">output_solution</a>(t)</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="keywordflow">END DO</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  CALL <a class="code" href="classinpout.html#a5509aa72c5872c593a25bb9cb35b5282">output_dakota</a></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  CALL <a class="code" href="classsolver.html#aff22faa038a10b97f3c95993a368b206">deallocate_solver_variables</a></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  CALL <a class="code" href="classinpout.html#afaadcd2f12348203dde67f2d0c7a0267">close_units</a></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  CALL cpu_time(t2)</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  <span class="keyword">WRITE</span>(*,*) <span class="stringliteral">&#39;Time taken by the code was&#39;</span>,t2-t1,<span class="stringliteral">&#39;seconds&#39;</span></div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="keyword">END PROGRAM </span><a class="code" href="IMEX__SfloW_8f90.html#a80b23a8cfea2702ae5a30733d93bd742">imex_sflow</a></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div>
+<div class="ttc" id="classsolver_html_a6e04b0e028b9df0618bfca1f81a242d9"><div class="ttname"><a href="classsolver.html#a6e04b0e028b9df0618bfca1f81a242d9">solver::imex_rk_solver</a></div><div class="ttdeci">subroutine imex_rk_solver</div><div class="ttdoc">Runge-Kutta integration. </div><div class="ttdef"><b>Definition:</b> <a href="solver_8f90_source.html#l00414">solver.f90:414</a></div></div>
 <div class="ttc" id="classconstitutive_html_a0b272e23604e3f6f6fc247a1b2c2ec9d"><div class="ttname"><a href="classconstitutive.html#a0b272e23604e3f6f6fc247a1b2c2ec9d">constitutive::init_problem_param</a></div><div class="ttdeci">subroutine init_problem_param</div><div class="ttdoc">Initialization of relaxation flags. </div><div class="ttdef"><b>Definition:</b> <a href="constitutive_8f90_source.html#l00034">constitutive.f90:34</a></div></div>
-<div class="ttc" id="classsolver_html_abd4348ce0a419f02bddd356dfa5470bc"><div class="ttname"><a href="classsolver.html#abd4348ce0a419f02bddd356dfa5470bc">solver::timestep</a></div><div class="ttdeci">subroutine timestep</div><div class="ttdoc">Time-step computation. </div><div class="ttdef"><b>Definition:</b> <a href="solver_8f90_source.html#l00321">solver.f90:321</a></div></div>
-<div class="ttc" id="classinpout_html_a48fa95e34c9eb0896f65d0e07fd6bb8c"><div class="ttname"><a href="classinpout.html#a48fa95e34c9eb0896f65d0e07fd6bb8c">inpout::read_param</a></div><div class="ttdeci">subroutine read_param</div><div class="ttdoc">Read the input file. </div><div class="ttdef"><b>Definition:</b> <a href="inpout_8f90_source.html#l00235">inpout.f90:235</a></div></div>
+<div class="ttc" id="classsolver_html_abd4348ce0a419f02bddd356dfa5470bc"><div class="ttname"><a href="classsolver.html#abd4348ce0a419f02bddd356dfa5470bc">solver::timestep</a></div><div class="ttdeci">subroutine timestep</div><div class="ttdoc">Time-step computation. </div><div class="ttdef"><b>Definition:</b> <a href="solver_8f90_source.html#l00322">solver.f90:322</a></div></div>
+<div class="ttc" id="classinpout_html_a48fa95e34c9eb0896f65d0e07fd6bb8c"><div class="ttname"><a href="classinpout.html#a48fa95e34c9eb0896f65d0e07fd6bb8c">inpout::read_param</a></div><div class="ttdeci">subroutine read_param</div><div class="ttdoc">Read the input file. </div><div class="ttdef"><b>Definition:</b> <a href="inpout_8f90_source.html#l00239">inpout.f90:239</a></div></div>
 <div class="ttc" id="classsolver_html"><div class="ttname"><a href="classsolver.html">solver</a></div><div class="ttdoc">Numerical solver. </div><div class="ttdef"><b>Definition:</b> <a href="solver_8f90_source.html#l00012">solver.f90:12</a></div></div>
 <div class="ttc" id="IMEX__SfloW_8f90_html_a80b23a8cfea2702ae5a30733d93bd742"><div class="ttname"><a href="IMEX__SfloW_8f90.html#a80b23a8cfea2702ae5a30733d93bd742">imex_sflow</a></div><div class="ttdeci">program imex_sflow</div><div class="ttdoc">Github project page: http://demichie.github.io/IMEX_SfloW/  . </div><div class="ttdef"><b>Definition:</b> <a href="IMEX__SfloW_8f90_source.html#l00030">IMEX_SfloW.f90:30</a></div></div>
+<div class="ttc" id="classinit_html_ab36461581b6f2751245a3e6c3a634f5e"><div class="ttname"><a href="classinit.html#ab36461581b6f2751245a3e6c3a634f5e">init::initial_conditions</a></div><div class="ttdeci">subroutine initial_conditions</div><div class="ttdoc">Problem initialization. </div><div class="ttdef"><b>Definition:</b> <a href="init_8f90_source.html#l00133">init.f90:133</a></div></div>
 <div class="ttc" id="classinit_html_af721a6c340570c4c94e29b5b463cda35"><div class="ttname"><a href="classinit.html#af721a6c340570c4c94e29b5b463cda35">init::riemann_problem</a></div><div class="ttdeci">subroutine riemann_problem</div><div class="ttdoc">Riemann problem initialization. </div><div class="ttdef"><b>Definition:</b> <a href="init_8f90_source.html#l00038">init.f90:38</a></div></div>
-<div class="ttc" id="classinpout_html_ada96f5c8fb386e998bad52ca718cfa90"><div class="ttname"><a href="classinpout.html#ada96f5c8fb386e998bad52ca718cfa90">inpout::init_param</a></div><div class="ttdeci">subroutine init_param</div><div class="ttdoc">Initialization of the variables read from the input file. </div><div class="ttdef"><b>Definition:</b> <a href="inpout_8f90_source.html#l00103">inpout.f90:103</a></div></div>
-<div class="ttc" id="classinpout_html_ab2438d8b9a5fea8b1b97cc47d933e20d"><div class="ttname"><a href="classinpout.html#ab2438d8b9a5fea8b1b97cc47d933e20d">inpout::read_solution</a></div><div class="ttdeci">subroutine read_solution</div><div class="ttdoc">Read the solution from the restart unit. </div><div class="ttdef"><b>Definition:</b> <a href="inpout_8f90_source.html#l00419">inpout.f90:419</a></div></div>
-<div class="ttc" id="classsolver_html_aff22faa038a10b97f3c95993a368b206"><div class="ttname"><a href="classsolver.html#aff22faa038a10b97f3c95993a368b206">solver::deallocate_solver_variables</a></div><div class="ttdeci">subroutine deallocate_solver_variables</div><div class="ttdoc">Memory deallocation. </div><div class="ttdef"><b>Definition:</b> <a href="solver_8f90_source.html#l00269">solver.f90:269</a></div></div>
+<div class="ttc" id="classinpout_html_ada96f5c8fb386e998bad52ca718cfa90"><div class="ttname"><a href="classinpout.html#ada96f5c8fb386e998bad52ca718cfa90">inpout::init_param</a></div><div class="ttdeci">subroutine init_param</div><div class="ttdoc">Initialization of the variables read from the input file. </div><div class="ttdef"><b>Definition:</b> <a href="inpout_8f90_source.html#l00105">inpout.f90:105</a></div></div>
+<div class="ttc" id="classinpout_html_ab2438d8b9a5fea8b1b97cc47d933e20d"><div class="ttname"><a href="classinpout.html#ab2438d8b9a5fea8b1b97cc47d933e20d">inpout::read_solution</a></div><div class="ttdeci">subroutine read_solution</div><div class="ttdoc">Read the solution from the restart unit. </div><div class="ttdef"><b>Definition:</b> <a href="inpout_8f90_source.html#l00442">inpout.f90:442</a></div></div>
+<div class="ttc" id="classsolver_html_aff22faa038a10b97f3c95993a368b206"><div class="ttname"><a href="classsolver.html#aff22faa038a10b97f3c95993a368b206">solver::deallocate_solver_variables</a></div><div class="ttdeci">subroutine deallocate_solver_variables</div><div class="ttdoc">Memory deallocation. </div><div class="ttdef"><b>Definition:</b> <a href="solver_8f90_source.html#l00270">solver.f90:270</a></div></div>
 <div class="ttc" id="classgeometry_html"><div class="ttname"><a href="classgeometry.html">geometry</a></div><div class="ttdoc">Grid module. </div><div class="ttdef"><b>Definition:</b> <a href="geometry_8f90_source.html#l00007">geometry.f90:7</a></div></div>
 <div class="ttc" id="classinit_html"><div class="ttname"><a href="classinit.html">init</a></div><div class="ttdoc">Initial solution. </div><div class="ttdef"><b>Definition:</b> <a href="init_8f90_source.html#l00008">init.f90:8</a></div></div>
-<div class="ttc" id="classinpout_html_a5509aa72c5872c593a25bb9cb35b5282"><div class="ttname"><a href="classinpout.html#a5509aa72c5872c593a25bb9cb35b5282">inpout::output_dakota</a></div><div class="ttdeci">subroutine output_dakota</div><div class="ttdef"><b>Definition:</b> <a href="inpout_8f90_source.html#l00620">inpout.f90:620</a></div></div>
+<div class="ttc" id="classinpout_html_a5509aa72c5872c593a25bb9cb35b5282"><div class="ttname"><a href="classinpout.html#a5509aa72c5872c593a25bb9cb35b5282">inpout::output_dakota</a></div><div class="ttdeci">subroutine output_dakota</div><div class="ttdef"><b>Definition:</b> <a href="inpout_8f90_source.html#l00649">inpout.f90:649</a></div></div>
 <div class="ttc" id="classparameters_html"><div class="ttname"><a href="classparameters.html">parameters</a></div><div class="ttdoc">Parameters. </div><div class="ttdef"><b>Definition:</b> <a href="parameters_8f90_source.html#l00007">parameters.f90:7</a></div></div>
 <div class="ttc" id="classconstitutive_html"><div class="ttname"><a href="classconstitutive.html">constitutive</a></div><div class="ttdoc">Constitutive equations. </div><div class="ttdef"><b>Definition:</b> <a href="constitutive_8f90_source.html#l00004">constitutive.f90:4</a></div></div>
-<div class="ttc" id="classsolver_html_a8bb20ebeb5efbdf3c486ddbee2d506c3"><div class="ttname"><a href="classsolver.html#a8bb20ebeb5efbdf3c486ddbee2d506c3">solver::allocate_solver_variables</a></div><div class="ttdeci">subroutine allocate_solver_variables</div><div class="ttdoc">Memory allocation. </div><div class="ttdef"><b>Definition:</b> <a href="solver_8f90_source.html#l00111">solver.f90:111</a></div></div>
+<div class="ttc" id="classsolver_html_a8bb20ebeb5efbdf3c486ddbee2d506c3"><div class="ttname"><a href="classsolver.html#a8bb20ebeb5efbdf3c486ddbee2d506c3">solver::allocate_solver_variables</a></div><div class="ttdeci">subroutine allocate_solver_variables</div><div class="ttdoc">Memory allocation. </div><div class="ttdef"><b>Definition:</b> <a href="solver_8f90_source.html#l00112">solver.f90:112</a></div></div>
 <div class="ttc" id="classinpout_html"><div class="ttname"><a href="classinpout.html">inpout</a></div><div class="ttdoc">Input/Output module. </div><div class="ttdef"><b>Definition:</b> <a href="inpout_8f90_source.html#l00013">inpout.f90:13</a></div></div>
-<div class="ttc" id="classinpout_html_a7b0af495f327e7c3330229aeb1675455"><div class="ttname"><a href="classinpout.html#a7b0af495f327e7c3330229aeb1675455">inpout::output_solution</a></div><div class="ttdeci">subroutine output_solution(t)</div><div class="ttdoc">Write the solution on the output unit. </div><div class="ttdef"><b>Definition:</b> <a href="inpout_8f90_source.html#l00485">inpout.f90:485</a></div></div>
-<div class="ttc" id="classinpout_html_afaadcd2f12348203dde67f2d0c7a0267"><div class="ttname"><a href="classinpout.html#afaadcd2f12348203dde67f2d0c7a0267">inpout::close_units</a></div><div class="ttdeci">subroutine close_units</div><div class="ttdef"><b>Definition:</b> <a href="inpout_8f90_source.html#l00579">inpout.f90:579</a></div></div>
+<div class="ttc" id="classinpout_html_a7b0af495f327e7c3330229aeb1675455"><div class="ttname"><a href="classinpout.html#a7b0af495f327e7c3330229aeb1675455">inpout::output_solution</a></div><div class="ttdeci">subroutine output_solution(t)</div><div class="ttdoc">Write the solution on the output unit. </div><div class="ttdef"><b>Definition:</b> <a href="inpout_8f90_source.html#l00509">inpout.f90:509</a></div></div>
+<div class="ttc" id="classinpout_html_afaadcd2f12348203dde67f2d0c7a0267"><div class="ttname"><a href="classinpout.html#afaadcd2f12348203dde67f2d0c7a0267">inpout::close_units</a></div><div class="ttdeci">subroutine close_units</div><div class="ttdef"><b>Definition:</b> <a href="inpout_8f90_source.html#l00608">inpout.f90:608</a></div></div>
 <div class="ttc" id="classgeometry_html_a847520e028099966e11b6ced202e6348"><div class="ttname"><a href="classgeometry.html#a847520e028099966e11b6ced202e6348">geometry::init_grid</a></div><div class="ttdeci">subroutine init_grid</div><div class="ttdoc">Finite volume grid initialization. </div><div class="ttdef"><b>Definition:</b> <a href="geometry_8f90_source.html#l00047">geometry.f90:47</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Oct 7 2016 10:30:54 for IMEXSfloW by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Nov 22 2016 16:23:06 for IMEXSfloW by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

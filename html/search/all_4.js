@@ -24,6 +24,7 @@ var searchData=
   ['eval_5fhyperbolic_5fterms',['eval_hyperbolic_terms',['../classsolver.html#a4dc2ff97b9bfd8d78c59c693fbf1baf4',1,'solver']]],
   ['eval_5fjacobian',['eval_jacobian',['../classsolver.html#a84af10f2b281565a7eb2b980bd58da8f',1,'solver']]],
   ['eval_5flocal_5fspeeds',['eval_local_speeds',['../classconstitutive.html#ab7cfb682cd8d7f1d274909a805cce9df',1,'constitutive']]],
+  ['eval_5flocal_5fspeeds2',['eval_local_speeds2',['../classconstitutive.html#afa7c4ee367eed25bc99e9b14f0f527b3',1,'constitutive']]],
   ['eval_5fnonhyperbolic_5fterms',['eval_nonhyperbolic_terms',['../classconstitutive.html#a9dede3f00e6f693b85f5adbb7f2c6cef',1,'constitutive']]],
   ['eval_5fspeeds',['eval_speeds',['../classsolver.html#aaca84b0a79154c2b5c6aac1b484fcce0',1,'solver']]],
   ['expl_5fterms',['expl_terms',['../classsolver.html#ab862ea74db5ee70719e6a79facdcffaa',1,'solver']]],

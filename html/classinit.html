@@ -99,6 +99,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af721a6c340570c4c94e29b5b463cda35"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classinit.html#af721a6c340570c4c94e29b5b463cda35">riemann_problem</a></td></tr>
 <tr class="memdesc:af721a6c340570c4c94e29b5b463cda35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Riemann problem initialization.  <a href="#af721a6c340570c4c94e29b5b463cda35">More...</a><br /></td></tr>
 <tr class="separator:af721a6c340570c4c94e29b5b463cda35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab36461581b6f2751245a3e6c3a634f5e"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classinit.html#ab36461581b6f2751245a3e6c3a634f5e">initial_conditions</a></td></tr>
+<tr class="memdesc:ab36461581b6f2751245a3e6c3a634f5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Problem initialization.  <a href="#ab36461581b6f2751245a3e6c3a634f5e">More...</a><br /></td></tr>
+<tr class="separator:ab36461581b6f2751245a3e6c3a634f5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38bc0ac60acb730e29b9026ac74790a3"><td class="memItemLeft" align="right" valign="top">real *8 function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classinit.html#a38bc0ac60acb730e29b9026ac74790a3">water_function</a> (x, Bj)</td></tr>
+<tr class="memdesc:a38bc0ac60acb730e29b9026ac74790a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Water function.  <a href="#a38bc0ac60acb730e29b9026ac74790a3">More...</a><br /></td></tr>
+<tr class="separator:a38bc0ac60acb730e29b9026ac74790a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7cb70db09116bb99ddf4c59ae8cafbcf"><td class="memItemLeft" align="right" valign="top">real *8 function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classinit.html#a7cb70db09116bb99ddf4c59ae8cafbcf">velocity_function</a> (x, Bj)</td></tr>
+<tr class="memdesc:a7cb70db09116bb99ddf4c59ae8cafbcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Velocity function.  <a href="#a7cb70db09116bb99ddf4c59ae8cafbcf">More...</a><br /></td></tr>
+<tr class="separator:a7cb70db09116bb99ddf4c59ae8cafbcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -127,6 +136,44 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Definition at line <a class="el" href="init_8f90_source.html#l00008">8</a> of file <a class="el" href="init_8f90_source.html">init.f90</a>.</p>
 </div><h2 class="groupheader">Member Function/Subroutine Documentation</h2>
+<a class="anchor" id="ab36461581b6f2751245a3e6c3a634f5e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine init::initial_conditions </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Problem initialization. </p>
+<p>This subroutine initialize the solution for a a generic problem. The values are read from water and velocity functions </p><dl class="section date"><dt>Date</dt><dd>OCTOBER 2016 </dd></dl>
+
+<p>Definition at line <a class="el" href="init_8f90_source.html#l00133">133</a> of file <a class="el" href="init_8f90_source.html">init.f90</a>.</p>
+
+<p><div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classinit_ab36461581b6f2751245a3e6c3a634f5e_cgraph.png" border="0" usemap="#classinit_ab36461581b6f2751245a3e6c3a634f5e_cgraph" alt=""/></div>
+<map name="classinit_ab36461581b6f2751245a3e6c3a634f5e_cgraph" id="classinit_ab36461581b6f2751245a3e6c3a634f5e_cgraph">
+<area shape="rect" id="node2" href="classconstitutive.html#a4ab9b1c126e45596cf981758498241e5" title="Physical to conservative variables. " alt="" coords="198,5,349,32"/><area shape="rect" id="node3" href="classinit.html#a38bc0ac60acb730e29b9026ac74790a3" title="Water function. " alt="" coords="207,56,339,83"/><area shape="rect" id="node5" href="classinit.html#a7cb70db09116bb99ddf4c59ae8cafbcf" title="Velocity function. " alt="" coords="201,107,346,133"/><area shape="rect" id="node4" href="classgeometry.html#a63073e1e0181295cbdcc3c8a85f4d91d" title="Batimetry function. " alt="" coords="397,49,536,90"/></map>
+</div>
+</p>
+
+<p><div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classinit_ab36461581b6f2751245a3e6c3a634f5e_icgraph.png" border="0" usemap="#classinit_ab36461581b6f2751245a3e6c3a634f5e_icgraph" alt=""/></div>
+<map name="classinit_ab36461581b6f2751245a3e6c3a634f5e_icgraph" id="classinit_ab36461581b6f2751245a3e6c3a634f5e_icgraph">
+<area shape="rect" id="node2" href="IMEX__SfloW_8f90.html#a80b23a8cfea2702ae5a30733d93bd742" title="Github project page: http://demichie.github.io/IMEX_SfloW/ &#160;. " alt="" coords="197,5,285,32"/></map>
+</div>
+</p>
+
+</div>
+</div>
 <a class="anchor" id="af721a6c340570c4c94e29b5b463cda35"></a>
 <div class="memitem">
 <div class="memproto">
@@ -160,6 +207,107 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classinit_af721a6c340570c4c94e29b5b463cda35_icgraph.png" border="0" usemap="#classinit_af721a6c340570c4c94e29b5b463cda35_icgraph" alt=""/></div>
 <map name="classinit_af721a6c340570c4c94e29b5b463cda35_icgraph" id="classinit_af721a6c340570c4c94e29b5b463cda35_icgraph">
 <area shape="rect" id="node2" href="IMEX__SfloW_8f90.html#a80b23a8cfea2702ae5a30733d93bd742" title="Github project page: http://demichie.github.io/IMEX_SfloW/ &#160;. " alt="" coords="200,5,288,32"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a7cb70db09116bb99ddf4c59ae8cafbcf"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">real*8 function init::velocity_function </td>
+          <td>(</td>
+          <td class="paramtype">real*8, intent(in)&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real*8, intent(in)&#160;</td>
+          <td class="paramname"><em>Bj</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Velocity function. </p>
+<p>This subroutine defines the velocity in the input x grid point </p><dl class="section date"><dt>Date</dt><dd>OCTOBER 2016 </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td>original grid (<b>input</b>) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="init_8f90_source.html#l00211">211</a> of file <a class="el" href="init_8f90_source.html">init.f90</a>.</p>
+
+<p><div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classinit_a7cb70db09116bb99ddf4c59ae8cafbcf_icgraph.png" border="0" usemap="#classinit_a7cb70db09116bb99ddf4c59ae8cafbcf_icgraph" alt=""/></div>
+<map name="classinit_a7cb70db09116bb99ddf4c59ae8cafbcf_icgraph" id="classinit_a7cb70db09116bb99ddf4c59ae8cafbcf_icgraph">
+<area shape="rect" id="node2" href="classinit.html#ab36461581b6f2751245a3e6c3a634f5e" title="Problem initialization. " alt="" coords="201,5,343,32"/><area shape="rect" id="node3" href="IMEX__SfloW_8f90.html#a80b23a8cfea2702ae5a30733d93bd742" title="Github project page: http://demichie.github.io/IMEX_SfloW/ &#160;. " alt="" coords="392,5,480,32"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a38bc0ac60acb730e29b9026ac74790a3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">real*8 function init::water_function </td>
+          <td>(</td>
+          <td class="paramtype">real*8, intent(in)&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real*8, intent(in)&#160;</td>
+          <td class="paramname"><em>Bj</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Water function. </p>
+<p>This subroutine defines water height hB=h+B in the input x grid point </p><dl class="section date"><dt>Date</dt><dd>OCTOBER 2016 </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td>original grid (<b>input</b>) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="init_8f90_source.html#l00185">185</a> of file <a class="el" href="init_8f90_source.html">init.f90</a>.</p>
+
+<p><div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classinit_a38bc0ac60acb730e29b9026ac74790a3_cgraph.png" border="0" usemap="#classinit_a38bc0ac60acb730e29b9026ac74790a3_cgraph" alt=""/></div>
+<map name="classinit_a38bc0ac60acb730e29b9026ac74790a3_cgraph" id="classinit_a38bc0ac60acb730e29b9026ac74790a3_cgraph">
+<area shape="rect" id="node2" href="classgeometry.html#a63073e1e0181295cbdcc3c8a85f4d91d" title="Batimetry function. " alt="" coords="187,5,325,46"/></map>
+</div>
+</p>
+
+<p><div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classinit_a38bc0ac60acb730e29b9026ac74790a3_icgraph.png" border="0" usemap="#classinit_a38bc0ac60acb730e29b9026ac74790a3_icgraph" alt=""/></div>
+<map name="classinit_a38bc0ac60acb730e29b9026ac74790a3_icgraph" id="classinit_a38bc0ac60acb730e29b9026ac74790a3_icgraph">
+<area shape="rect" id="node2" href="classinit.html#ab36461581b6f2751245a3e6c3a634f5e" title="Problem initialization. " alt="" coords="187,5,330,32"/><area shape="rect" id="node3" href="IMEX__SfloW_8f90.html#a80b23a8cfea2702ae5a30733d93bd742" title="Github project page: http://demichie.github.io/IMEX_SfloW/ &#160;. " alt="" coords="379,5,467,32"/></map>
 </div>
 </p>
 
@@ -266,7 +414,7 @@ Here is the caller graph for this function:</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Oct 7 2016 10:30:54 for IMEXSfloW by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Nov 22 2016 16:23:06 for IMEXSfloW by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>
