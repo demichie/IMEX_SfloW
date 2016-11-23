@@ -315,6 +315,8 @@ CONTAINS
     COMPLEX*16 :: qj(n_vars)
     COMPLEX*16 :: flux(n_eqns)
 
+    COMPLEX*16 :: h_temp , u_temp
+
     INTEGER :: i 
     
     IF ( present(c_qj) .AND. present(c_flux) ) THEN
@@ -337,18 +339,21 @@ CONTAINS
     END IF
    
     flux(1) = qj(2)
-    
-    ! check if h is small
-    IF((qj(1)-Bj).GT.10.d0**(-8))THEN
+   
+    h_temp = qj(1) - Bj
 
-      flux(2) = qj(2)**2.D0 / ( qj(1) - Bj ) + 0.5D0 * grav * ( qj(1) - Bj ) ** 2.D0 
-
+    IF ( h_temp .NE. 0.D0 ) THEN
+       
+       u_temp = qj(2) / h_temp
+       flux(2) = h_temp * u_temp**2.0 + 0.5D0 * grav * h_temp ** 2.0  
+       
     ELSE
 
-      flux(2) = 0.d0
-
-    ENDIF    
-
+       flux(2) = 0.d0
+       
+    END IF
+    
+    
     IF ( present(c_qj) .AND. present(c_flux) ) THEN
 
        c_flux = flux
