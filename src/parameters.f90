@@ -8,6 +8,9 @@ MODULE parameters
 
   IMPLICIT NONE
 
+  INTEGER, PARAMETER :: n_vars = 3        !< Number of conservative variables
+  INTEGER, PARAMETER :: n_eqns = n_vars   !< Number of equations
+
   REAL*8 :: eps_newton        !< threshold for the convergence of the
                               !< Newton's method 
   REAL*8 :: max_dt            !< Largest time step allowed
@@ -18,9 +21,9 @@ MODULE parameters
   REAL*8 :: reconstr_coeff    !< Slope coefficient in the linear reconstruction
 
   !> Parameter for the choice of the variables to reconstruct at the interface:
-  !> - 0      => conservative variables ( h+B , h*u ), default
-  !> - 1      => physical variables 1   ( h+B , u )
-  !> - 2      => physical variables 2   ( h , u )
+  !> - 0      => conservative variables ( h+B , h*u , h*T ), default
+  !> - 1      => physical variables 1   ( h+B , u , T )
+  !> - 2      => physical variables 2   ( h , u , T )
   !> .
   INTEGER :: reconstr_variables 
 
@@ -41,9 +44,6 @@ MODULE parameters
   !> - F      => generic initial conditions (uploaded through functions, to be defined in inpout_2d.f90)
   !> .
   LOGICAL :: riemann_flag
-
-  INTEGER, PARAMETER :: n_vars = 2        !< Number of conservative variables
-  INTEGER, PARAMETER :: n_eqns = n_vars   !< Number of equations
 
   INTEGER :: n_nh     !< Number of non-hyperbolic terms
 

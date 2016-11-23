@@ -17,9 +17,18 @@ MODULE constitutive
 
   COMPLEX*16 :: h      !< height
   COMPLEX*16 :: u      !< velocity (x direction)
+  COMPLEX*16 :: T      !< temperature
 
   !> gravitational acceleration
   REAL*8 :: grav
+
+  !> evironment temperature
+  REAL*8 :: T_env
+
+  !> radiative coefficient
+  REAL*8 :: rad_coeff
+
+
 
 CONTAINS
 
@@ -84,10 +93,12 @@ CONTAINS
     IF ( REAL( h ) .GT. eps_sing ** 0.25D0 ) THEN
 
        u = qj(2) / h 
+       T = qj(3) / h 
 
     ELSE
 
        u = DSQRT(2.D0) * h * qj(2) / CDSQRT( h**4 + DCMPLX(eps_sing,0.D0) )
+       T = DSQRT(2.D0) * h * qj(3) / CDSQRT( h**4 + DCMPLX(eps_sing,0.D0) )
 
     END IF
 
@@ -186,6 +197,7 @@ CONTAINS
           
     qp(1) = REAL(h+B)
     qp(2) = REAL(u)
+    qp(3) = REAL(T)
 
     
   END SUBROUTINE qc_to_qp
@@ -214,12 +226,15 @@ CONTAINS
     
     REAL*8 :: r_hB      !> batimetry + height 
     REAL*8 :: r_u       !> velocity
+    REAL*8 :: r_T       !> temperature
     
     r_hB = qp(1)
     r_u = qp(2)
-    
+    r_T = qp(3)
+     
     qc(1) = r_hB
     qc(2) = ( r_hB - B ) * r_u
+    qc(3) = ( r_hB - B ) * r_T
 
   END SUBROUTINE qp_to_qc
 
@@ -250,7 +265,7 @@ CONTAINS
           
     qp(1) = REAL(h)
     qp(2) = REAL(u)
-
+    qp(3) = REAL(T)
     
   END SUBROUTINE qc_to_qp2
 
@@ -279,12 +294,15 @@ CONTAINS
     
     REAL*8 :: r_h      !> batimetry + height 
     REAL*8 :: r_u       !> velocity
+    REAL*8 :: r_T       !> temperature
     
     r_h = qp(1)
     r_u = qp(2)
+    r_T = qp(3)
     
     qc(1) = r_h + B
     qc(2) = r_h * r_u
+    qc(3) = r_h * r_T
 
   END SUBROUTINE qp2_to_qc
 
@@ -315,7 +333,7 @@ CONTAINS
     COMPLEX*16 :: qj(n_vars)
     COMPLEX*16 :: flux(n_eqns)
 
-    COMPLEX*16 :: h_temp , u_temp
+    COMPLEX*16 :: h_temp , u_temp , T_temp
 
     INTEGER :: i 
     
@@ -345,11 +363,18 @@ CONTAINS
     IF ( h_temp .NE. 0.D0 ) THEN
        
        u_temp = qj(2) / h_temp
+
        flux(2) = h_temp * u_temp**2.0 + 0.5D0 * grav * h_temp ** 2.0  
+
+       T_temp = qj(3) / h_temp
+
+       flux(3) = h_temp * u_temp * T_temp
        
     ELSE
 
        flux(2) = 0.d0
+
+       flux(3) = 0.d0
        
     END IF
     
@@ -449,7 +474,9 @@ CONTAINS
   !> \brief Explicit Forces term
   !
   !> This subroutine evaluates the forces to be treated explicitely
-  !> in the DIRK numerical scheme (e.g. gravity)
+  !> in the DIRK numerical scheme (e.g. gravity). Please check the signes of the 
+  !> terms in the equations (here they should be as if the source terms are on 
+  !> the left-hand side of the equations).
   !> \date 01/06/2012
   !> \param[in]     qj                 conservative variables 
   !> \param[out]    expl_forces_term   forces term
@@ -469,10 +496,14 @@ CONTAINS
 
     CALL phys_var(Bj,r_qj = qj)
 
-    expl_forces_term(2) = grav * h * Bprimej
+    expl_forces_term(2) = grav * REAL(h) * Bprimej
 
     ! friction term
-    expl_forces_term(2) = expl_forces_term(2) + ( 0.001 / (1.D0+10.D0*h) ) * u
+    expl_forces_term(2) = expl_forces_term(2) + ( 1.D-3 / ( 1.D0 + 10.D0        &
+         * REAL(h) ) ) * REAL(u)
+
+    expl_forces_term(3) = rad_coeff * ( REAL(T)**4 - T_env**4 )
+
 
   END SUBROUTINE eval_explicit_forces
 

@@ -117,7 +117,7 @@ PROGRAM IMEX_SfloW
 
   END DO
 
-  CALL output_dakota
+  ! CALL output_dakota
 
   CALL deallocate_solver_variables
 

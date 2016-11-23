@@ -18,9 +18,11 @@ MODULE init
 
   REAL*8 :: hB_L          !< Left height
   REAL*8 :: u_L           !< Left velocity  
+  REAL*8 :: T_L           !< Left temperature
   
   REAL*8 :: hB_R          !< Right height
   REAL*8 :: u_R           !< Right velocity
+  REAL*8 :: T_R           !< Right temperature
 
 
 CONTAINS
@@ -49,6 +51,7 @@ CONTAINS
 
     REAL*8 :: hB            !< height + batimetry
     REAL*8 :: u             !< velocity
+    REAL*8 :: T             !< temperature
 
     !REAL*8 :: qp(n_vars) , qj(n_vars)
     REAL*8 :: qp(n_vars,comp_cells) , qj(n_vars)
@@ -77,8 +80,8 @@ CONTAINS
     DO i=1,i1
 
        qp(1,i) = hB_L
-
        qp(2,i) = u_L
+       qp(3,i) = T_L
 
     ENDDO
 
@@ -99,8 +102,8 @@ CONTAINS
     DO i=i1+1,comp_cells
 
       qp(1,i) = hB_R
-
       qp(2,i) = u_R
+      qp(3,i) = T_R
 
     ENDDO
 
@@ -153,6 +156,8 @@ CONTAINS
          qp(1,j) = water_function(x_comp(j),B_cent(j))
 
          qp(2,j) = velocity_function(x_comp(j),B_cent(j))
+
+         qp(3,j) = temperature_function(x_comp(j),B_cent(j))
 
     ENDDO
 
@@ -219,6 +224,27 @@ CONTAINS
     velocity_function=0.d0
 
   END FUNCTION velocity_function
+
+
+!---------------------------------------------------------------------------
+!> Temperature function
+!
+!> This subroutine defines the temperature
+!> in the input x grid point
+!> \date OCTOBER 2016
+!> \param    x           original grid                (\b input)
+!---------------------------------------------------------------------------
+  REAL*8 FUNCTION temperature_function(x,Bj)
+
+    IMPLICIT NONE
+    
+    REAL*8, INTENT(IN) :: x
+    REAL*8, INTENT(IN) :: Bj
+    
+    ! example from Kurganov and Petrova 2007    
+    temperature_function=310.d0
+
+  END FUNCTION temperature_function
 
 
 END MODULE init

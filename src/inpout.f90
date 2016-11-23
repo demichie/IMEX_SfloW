@@ -25,16 +25,16 @@ MODULE inpout
   USE init, ONLY : riemann_interface
 
   ! -- Variables for the namelist LEFT_STATE
-  USE init, ONLY : hB_L , u_L
+  USE init, ONLY : hB_L , u_L , T_L
 
   ! -- Variables for the namelist RIGHT_STATE
-  USE init, ONLY : hB_R , u_R
+  USE init, ONLY : hB_R , u_R , T_R
 
   ! -- Variables for the namelists LEFT/RIGHT_BOUNDARY_CONDITIONS
   USE parameters, ONLY : bc
 
   ! -- Variables for the namelist SOURCE_PARAMETERS
-  USE constitutive, ONLY : grav
+  USE constitutive, ONLY : grav , T_env , rad_coeff
 
   IMPLICIT NONE
 
@@ -62,10 +62,10 @@ MODULE inpout
   LOGICAL :: restart
 
   ! -- Variables for the namelists LEFT_BOUNDARY_CONDITIONS
-  TYPE(bc) :: hB_bcL , u_bcL
+  TYPE(bc) :: hB_bcL , u_bcL , T_bcL
 
   ! -- Variables for the namelists RIGHT_BOUNDARY_CONDITIONS
-  TYPE(bc) :: hB_bcR , u_bcR
+  TYPE(bc) :: hB_bcR , u_bcR , T_bcR
 
 
   NAMELIST / run_parameters / run_name , restart , batimetry_function_flag ,    &
@@ -77,15 +77,15 @@ MODULE inpout
 
   NAMELIST / newrun_parameters / x0 , xN , comp_cells , riemann_interface
 
-  NAMELIST / left_state / hB_L , u_L
+  NAMELIST / left_state / hB_L , u_L , T_L
+ 
+  NAMELIST / right_state / hB_R , u_R , T_R
 
-  NAMELIST / right_state / hB_R , u_R
+  NAMELIST / left_boundary_conditions / hB_bcL , u_bcL , T_bcL
 
-  NAMELIST / left_boundary_conditions / hB_bcL , u_bcL
+  NAMELIST / right_boundary_conditions / hB_bcR , u_bcR , T_bcR
 
-  NAMELIST / right_boundary_conditions / hB_bcR , u_bcR
-
-  NAMELIST / source_parameters / grav
+  NAMELIST / source_parameters / grav , T_env , rad_coeff
 
 CONTAINS
 
@@ -143,10 +143,12 @@ CONTAINS
     !-- Inizialization of the Variables for the namelist left_state
     hB_L = 1.D0
     u_L = 0.D0
+    T_L = 300.D0
 
     !-- Inizialization of the Variables for the namelist right_state
     hB_R = 0.5D0
     u_R = 0.D0
+    T_R = 300.D0
 
     !-- Inizialization of the Variables for the namelist left boundary conditions
 
@@ -156,6 +158,9 @@ CONTAINS
     u_bcL%flag = 1 
     u_bcL%value = 0.d0 
 
+    T_bcL%flag = 1 
+    T_bcL%value = 0.d0 
+
     !-- Inizialization of the Variables for the namelist right boundary conditions
 
     hB_bcR%flag = 1 
@@ -164,8 +169,13 @@ CONTAINS
     u_bcR%flag = 1 
     u_bcR%value = 0.d0 
 
+    T_bcR%flag = 1 
+    T_bcR%value = 0.d0 
+
     !-- Inizialization of the Variables for the namelist source_parameters
     grav = -9.81D0
+    T_env = 300
+    rad_coeff = 1.d-3
 
     input_file = 'shallow_water.inp'
 
@@ -334,11 +344,13 @@ CONTAINS
 
     bcL(1) = hB_bcL 
     bcL(2) = u_bcL 
+    bcL(3) = T_bcL 
 
     READ(input_unit,right_boundary_conditions)
 
     bcR(1) = hB_bcR 
     bcR(2) = u_bcR 
+    bcR(3) = T_bcR 
 
     READ(input_unit, source_parameters )
 
@@ -506,13 +518,13 @@ CONTAINS
   !
   !******************************************************************************
 
-  SUBROUTINE output_solution(t)
+  SUBROUTINE output_solution(time)
 
     ! external procedures
     USE constitutive, ONLY : qc_to_qp
 
     ! external variables
-    USE constitutive, ONLY : h , u
+    USE constitutive, ONLY : h , u , T
     USE geometry , ONLY : comp_cells , x0 , dx , x_comp , B_cent
     USE parameters, ONLY : n_vars
     USE parameters, ONLY : t_output , dt_output
@@ -520,7 +532,7 @@ CONTAINS
 
     IMPLICIT none
 
-    REAL*8, INTENT(IN) :: t
+    REAL*8, INTENT(IN) :: time
 
     CHARACTER(LEN=4) :: idx_string
 
@@ -539,7 +551,7 @@ CONTAINS
 
     OPEN(output_unit,FILE=output_file,status='unknown',form='formatted')
 
-    WRITE(output_unit,1002) x0,dx,comp_cells,t
+    WRITE(output_unit,1002) x0,dx,comp_cells,time
 
     DO j = 1,comp_cells
 
@@ -566,7 +578,7 @@ CONTAINS
 
     OPEN(output_unit,FILE=output_file,status='unknown',form='formatted')
 
-    WRITE(output_unit,1002) x0,dx,comp_cells,t
+    WRITE(output_unit,1002) x0,dx,comp_cells,time
 
     DO j = 1,comp_cells
 
@@ -581,10 +593,11 @@ CONTAINS
        CALL qc_to_qp(q(:,j),B_cent(j),qp(:))
 
        IF ( REAL(h) .LT. 1d-99) h = 0.d0
-       IF ( ABS(REAL(u)) .LT. 1d-99) u = 0.d0
+       IF ( ABS(REAL(u)) .LT. 1d-10) u = 0.d0
+       IF ( ABS(REAL(T)) .LT. 1d-10) T = 0.d0
 
 
-       WRITE(output_unit,1005) x_comp(j), REAL(h) , REAL(u) , B_cent(j) ,           &
+       WRITE(output_unit,1005) x_comp(j), REAL(T) , REAL(u) , B_cent(j) ,           &
             REAL(h) + B_cent(j)
 
     END DO
@@ -600,7 +613,7 @@ CONTAINS
 1005 FORMAT(5e20.12)
 
 
-    t_output = t + dt_output
+    t_output = time + dt_output
 
   END SUBROUTINE output_solution
 
