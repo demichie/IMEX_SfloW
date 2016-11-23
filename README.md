@@ -22,4 +22,11 @@ To test the code copy the executable from the bin folder in the EXAMPLES folder 
 
 A Matlab script (plot_p.m) is provided in the MATLAB folder to plot the results.
 
+Developers:
+
+Mattia de' Michieli Vitturi
+
+Giacomo Lari
+
+
 
