@@ -63,7 +63,7 @@ CONTAINS
     
     dx = ( xN - x0 ) / comp_cells
     
-    eps_sing = dx ** 4
+    eps_sing = MIN( dx , 1.D-5 ) ** 4
 
     WRITE(*,*) 'eps_sing = ',eps_sing
 
