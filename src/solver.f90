@@ -588,8 +588,8 @@ CONTAINS
   !> F(Q^{(j)}) +  dt \sum_{j=1}^{i-1} a_j  NH(Q^{(j)}) 
   !> + dt a_{diag} NH(Q^{(i)}) \f$\n
   !
-  !> \param[in]     Bj        batimetry at the cell center
-  !> \param[in]     Bprimej   batimetry slope at the cell center
+  !> \param[in]     Bj        bathimetry at the cell center
+  !> \param[in]     Bprimej   bathimetry slope at the cell center
   !> \param[in,out] qj        conservative variables 
   !> \param[in]     qj_old    conservative variables at the old time step
   !> \param[in]     a_tilde   explicit coefficents for the fluxes
@@ -902,8 +902,8 @@ CONTAINS
   !
   !> This subroutine search for the lenght of the descent step in order to have
   !> a decrease in the nonlinear function.
-  !> \param[in]     Bj             batimetry at the cell center
-  !> \param[in]     Bprimej        batimetry slope at the cell center
+  !> \param[in]     Bj             bathimetry at the cell center
+  !> \param[in]     Bprimej        bathimetry slope at the cell center
   !> \param[in]     qj_rel_NR_old  
   !> \param[in]     qj_org
   !> \param[in]     qj_old
@@ -1127,8 +1127,8 @@ CONTAINS
   !
   !> This subroutine evaluate the value of the nonlinear system in the state 
   !> defined by the variables qj.
-  !> \param[in]    Bj          batimetry at the cell center
-  !> \param[in]    Bprimej     batimetry slope at the cell center
+  !> \param[in]    Bj          bathimetry at the cell center
+  !> \param[in]    Bprimej     bathimetry slope at the cell center
   !> \param[in]    qj          conservative variables 
   !> \param[in]    qj_old      conservative variables at the old time step
   !> \param[in]    a_tilde     explicit coefficients for the hyperbolic terms 
@@ -1182,8 +1182,8 @@ CONTAINS
   !> This subroutine evaluate the jacobian of the non-linear system
   !> with respect to the conservative variables.
   !
-  !> \param[in]    Bj          batimetry at the cell center
-  !> \param[in]    Bprimej     batimetry slope at the cell center
+  !> \param[in]    Bj          bathimetry at the cell center
+  !> \param[in]    Bprimej     bathimetry slope at the cell center
   !> \param[in]    qj_rel      relative variation (qj=qj_rel*qj_org)
   !> \param[in]    qj_org      conservative variables at the old time step
   !> \param[in]    coeff_f     coefficient to rescale the nonlinear functions

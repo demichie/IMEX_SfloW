@@ -28,6 +28,8 @@ MODULE constitutive
   !> radiative coefficient
   REAL*8 :: rad_coeff
 
+  !> friction coefficient
+  REAL*8 :: frict_coeff
 
 
 CONTAINS
@@ -224,7 +226,7 @@ CONTAINS
     REAL*8, INTENT(IN) :: B
     REAL*8, INTENT(OUT) :: qc(n_vars)
     
-    REAL*8 :: r_hB      !> batimetry + height 
+    REAL*8 :: r_hB      !> bathimetry + height 
     REAL*8 :: r_u       !> velocity
     REAL*8 :: r_T       !> temperature
     
@@ -292,7 +294,7 @@ CONTAINS
     REAL*8, INTENT(IN) :: B
     REAL*8, INTENT(OUT) :: qc(n_vars)
     
-    REAL*8 :: r_h      !> batimetry + height 
+    REAL*8 :: r_h       !> bathimetry + height 
     REAL*8 :: r_u       !> velocity
     REAL*8 :: r_T       !> temperature
     
@@ -499,8 +501,8 @@ CONTAINS
     expl_forces_term(2) = grav * REAL(h) * Bprimej
 
     ! friction term
-    expl_forces_term(2) = expl_forces_term(2) + ( 1.D-3 / ( 1.D0 + 10.D0        &
-         * REAL(h) ) ) * REAL(u)
+    expl_forces_term(2) = expl_forces_term(2) + frict_coeff * ( 1.D-3 / ( 1.D0  &
+         + 10.D0 * REAL(h) ) ) * REAL(u)
 
     expl_forces_term(3) = rad_coeff * ( REAL(T)**4 - T_env**4 )
 

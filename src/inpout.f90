@@ -15,13 +15,13 @@ MODULE inpout
   ! -- Variables for the namelist RUN_PARAMETERS
   USE parameters, ONLY : solver_scheme , max_dt , t_start , t_end ,              &
        dt_output , cfl, limiter , theta , reconstr_coeff , reconstr_variables ,  &
-       interfaces_relaxation , n_RK , batimetry_function_flag , riemann_flag
+       interfaces_relaxation , n_RK , bathimetry_function_flag , riemann_flag
 
   USE solver, ONLY : verbose_level
 
   ! -- Variables for the namelist NEWRUN_PARAMETERS
   USE geometry, ONLY : x0 , xN , comp_cells
-  USE geometry, ONLY : batimetry_profile , n_batimetry_profile
+  USE geometry, ONLY : bathimetry_profile , n_bathimetry_profile
   USE init, ONLY : riemann_interface
 
   ! -- Variables for the namelist LEFT_STATE
@@ -34,7 +34,7 @@ MODULE inpout
   USE parameters, ONLY : bc
 
   ! -- Variables for the namelist SOURCE_PARAMETERS
-  USE constitutive, ONLY : grav , T_env , rad_coeff
+  USE constitutive, ONLY : grav , T_env , rad_coeff , frict_coeff
 
   IMPLICIT NONE
 
@@ -43,7 +43,7 @@ MODULE inpout
   CHARACTER(LEN=40) :: input_file         !< File with the run parameters
   CHARACTER(LEN=40) :: output_file        !< Name of the output files
   CHARACTER(LEN=40) :: restart_file       !< Name of the restart file 
-  CHARACTER(LEN=40) :: batimetry_file     !< Name of the batimetry file 
+  CHARACTER(LEN=40) :: bathimetry_file     !< Name of the bathimetry file 
   CHARACTER(LEN=40) :: dakota_file        !< Name of the dakota file 
 
   INTEGER, PARAMETER :: input_unit = 7    !< Input data unit
@@ -68,7 +68,7 @@ MODULE inpout
   TYPE(bc) :: hB_bcR , u_bcR , T_bcR
 
 
-  NAMELIST / run_parameters / run_name , restart , batimetry_function_flag ,    &
+  NAMELIST / run_parameters / run_name , restart , bathimetry_function_flag ,   &
        riemann_flag , max_dt , t_start , t_end , dt_output , solver_scheme ,    &
        cfl , limiter , theta , reconstr_coeff , reconstr_variables , n_RK ,     &
        verbose_level
@@ -85,7 +85,7 @@ MODULE inpout
 
   NAMELIST / right_boundary_conditions / hB_bcR , u_bcR , T_bcR
 
-  NAMELIST / source_parameters / grav , T_env , rad_coeff
+  NAMELIST / source_parameters / grav , T_env , rad_coeff , frict_coeff
 
 CONTAINS
 
@@ -115,7 +115,7 @@ CONTAINS
     !-- Inizialization of the Variables for the namelist RUN_PARAMETERS
     run_name = 'default'
     restart = .FALSE.
-    batimetry_function_flag=.FALSE.
+    bathimetry_function_flag=.FALSE.
     riemann_flag=.TRUE.
     max_dt = 1.d-3
     t_start = 0.0
@@ -176,6 +176,7 @@ CONTAINS
     grav = -9.81D0
     T_env = 300
     rad_coeff = 1.d-3
+    frict_coeff = 0.D0 
 
     input_file = 'shallow_water.inp'
 
@@ -194,23 +195,23 @@ CONTAINS
        WRITE(input_unit, right_boundary_conditions )
        WRITE(input_unit, source_parameters )
 
-       n_batimetry_profile = 2
+       n_bathimetry_profile = 2
 
-       ALLOCATE( batimetry_profile(2,n_batimetry_profile) )
+       ALLOCATE( bathimetry_profile(2,n_bathimetry_profile) )
 
-       batimetry_profile(1,1) = 0.d0
-       batimetry_profile(2,1) = 1.d0
+       bathimetry_profile(1,1) = 0.d0
+       bathimetry_profile(2,1) = 1.d0
 
-       batimetry_profile(2,2) = 0.d0
-       batimetry_profile(2,2) = 10.d0
+       bathimetry_profile(2,2) = 0.d0
+       bathimetry_profile(2,2) = 10.d0
 
 
-       WRITE(input_unit,*) '''BATIMETRY_PROFILE'''
-       WRITE(input_unit,*) n_batimetry_profile
+       WRITE(input_unit,*) '''BATHIMETRY_PROFILE'''
+       WRITE(input_unit,*) n_bathimetry_profile
 
-       DO i = 1, n_batimetry_profile
+       DO i = 1, n_bathimetry_profile
 
-          WRITE(input_unit,108) batimetry_profile(1:2,i)
+          WRITE(input_unit,108) bathimetry_profile(1:2,i)
 
 108       FORMAT(2(1x,e14.7))
 
@@ -356,32 +357,32 @@ CONTAINS
 
     tend1 = .FALSE.
 
-    WRITE(*,*) 'search batimetry_profile'
+    WRITE(*,*) 'search bathimetry_profile'
 
-    batimetry_profile_search: DO
+    bathimetry_profile_search: DO
 
        READ(input_unit,*, END = 200 ) card
 
-       IF( TRIM(card) == 'BATIMETRY_PROFILE' ) THEN
+       IF( TRIM(card) == 'BATHIMETRY_PROFILE' ) THEN
 
-          EXIT batimetry_profile_search
+          EXIT bathimetry_profile_search
 
        END IF
 
-    END DO batimetry_profile_search
+    END DO bathimetry_profile_search
 
-    READ(input_unit,*) n_batimetry_profile
+    READ(input_unit,*) n_bathimetry_profile
 
-    IF ( verbose_level .GE. 1 ) WRITE(*,*) 'n_batimetry_profile' ,            &
-         n_batimetry_profile
+    IF ( verbose_level .GE. 1 ) WRITE(*,*) 'n_bathimetry_profile' ,            &
+         n_bathimetry_profile
 
-    ALLOCATE( batimetry_profile(2,n_batimetry_profile) )
+    ALLOCATE( bathimetry_profile(2,n_bathimetry_profile) )
 
-    DO i = 1, n_batimetry_profile
+    DO i = 1, n_bathimetry_profile
 
-       READ(input_unit,*) batimetry_profile(1:2,i)
+       READ(input_unit,*) bathimetry_profile(1:2,i)
 
-       IF ( verbose_level .GE. 1 ) WRITE(*,*) i,batimetry_profile(1:2,i)
+       IF ( verbose_level .GE. 1 ) WRITE(*,*) i,bathimetry_profile(1:2,i)
 
     END DO
 
@@ -420,12 +421,12 @@ CONTAINS
 
     WRITE(backup_unit, source_parameters )
 
-    WRITE(backup_unit,*) '''BATIMETRY_PROFILE'''
-    WRITE(backup_unit,*) n_batimetry_profile
+    WRITE(backup_unit,*) '''BATHIMETRY_PROFILE'''
+    WRITE(backup_unit,*) n_bathimetry_profile
 
-    DO i = 1, n_batimetry_profile
+    DO i = 1, n_bathimetry_profile
 
-       WRITE(backup_unit,107) batimetry_profile(1:2,i)
+       WRITE(backup_unit,107) bathimetry_profile(1:2,i)
 
 107    FORMAT(2(1x,e14.7))
 

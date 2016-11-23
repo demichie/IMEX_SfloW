@@ -33,11 +33,11 @@ MODULE parameters
   !> .
   LOGICAL :: interfaces_relaxation
 
-  !> Flag to choose in which way we upload the batimetry
+  !> Flag to choose in which way we upload the bathimetry
   !> - T      => through a function
   !> - F      => through points
   !> .
-  LOGICAL :: batimetry_function_flag
+  LOGICAL :: bathimetry_function_flag
 
   !> Flag to choose the sort of problem to solve
   !> - T      => riemann problem

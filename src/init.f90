@@ -43,13 +43,13 @@ CONTAINS
 
     USE geometry, ONLY : x0 , xN , x_comp , comp_cells , B_cent
 
-    USE parameters, ONLY : n_vars , verbose_level, batimetry_function_flag
+    USE parameters, ONLY : n_vars , verbose_level, bathimetry_function_flag
 
     USE solver, ONLY : q
 
     IMPLICIT none
 
-    REAL*8 :: hB            !< height + batimetry
+    REAL*8 :: hB            !< height + bathimetry
     REAL*8 :: u             !< velocity
     REAL*8 :: T             !< temperature
 
@@ -139,7 +139,7 @@ CONTAINS
 
     USE geometry, ONLY : x0 , xN , x_comp , comp_cells , B_cent
 
-    USE parameters, ONLY : n_vars , verbose_level, batimetry_function_flag
+    USE parameters, ONLY : n_vars , verbose_level, bathimetry_function_flag
 
     USE solver, ONLY : q
 
@@ -188,7 +188,7 @@ CONTAINS
 !> \param    x           original grid                (\b input)
 !---------------------------------------------------------------------------
   REAL*8 FUNCTION water_function(x,Bj)
-    USE geometry, ONLY : batimetry_function
+    USE geometry, ONLY : bathimetry_function
 
     IMPLICIT NONE
    
@@ -196,7 +196,7 @@ CONTAINS
     REAL*8, INTENT(IN) :: Bj
 
     ! example from Kurganov and Petrova 2007   
-    !water_function=batimetry_function(x)
+    !water_function=bathimetry_function(x)
     water_function=Bj
 
     IF(x.LE.0.0)THEN
